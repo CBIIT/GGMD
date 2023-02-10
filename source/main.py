@@ -12,7 +12,7 @@ def gen_dataframe(smiles_input_file):
         smiles_list = [line.strip("\r\n ").split()[0] for line in f]
     
     df = pd.DataFrame()
-    df['smiles'] = smiles_list
+    df['smiles'] = smiles_list[10000:]
     # TODO: Add a compound ID column. ID can just be a unique number. Need to figure out how to track which ID's have been used even if removed.
     # I also need to add a feature to track all unique compounds across all generations.
     return df
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     #Begin optimizing
     #for epoch in range(args.num_epochs):
-    for epoch in range(1):
+    for epoch in range(args.num_epochs):
         print("Inside loop")
         
         #print(population.columns)

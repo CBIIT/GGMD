@@ -9,11 +9,12 @@ import ast
 import argparse
 import logging
 import yaml
+import time
 from yaml import Loader
 
 import optimizer2
 
-from generative_models.FNL_JTNN.fast_jtnn.gen_latent import encode_smiles
+from generative_models.FNL_JTNN.fast_jtnn.gen_latent import encode_smiles, decoder
 from generative_models.JTNN.VAEUtils import DistributedEvaluator
 #from rdkit import Chem
 #from rdkit import DataStructs
@@ -118,17 +119,85 @@ class JTNN_FNL(GenerativeModel):
 
     def __init__(self, params):
         self.encoder = encode_smiles(params)
-    def encode(self, smiles):
+        self.decoder = decoder(params)
+
+        self.optimizer = optimizer2.create_optimizer(params)
         
+
+    def encode(self, smiles):
+        print("Encoding")
         latent = self.encoder.encode(smiles)
         
+        print(type(latent))
+        print(type(latent[0]))
+        return list(latent)
 
-    def decode(self):
-        pass
-    def optimize(self):
-        pass
-    
+    def decode(self, latent):
+        print("Decoding")
+        #smiles = self.decoder.decode(latent)
+        
+        # Parallel:
+        # smiles = self.decoder.decode_simple_2(latent)
 
+        # Not parallel:
+        smiles = self.decoder.decode_simple(latent)
+        
+        return smiles
+        
+
+    def optimize(self, population):
+
+        print("Entering optimizing")
+
+        #Encode:
+        smiles = population['smiles']
+        latent = self.encode(smiles)
+        
+        assert len(smiles) == len(latent)
+
+        population['latent'] = latent
+        
+        #Optimize:
+        population = self.optimizer.optimize(population)
+
+        #Decode:
+        smiles = self.decode(latent)
+
+        assert len(smiles) == len(latent)
+        
+        return population
+
+def test_decoder(args):
+    print("Running FNL's JTNN Test function: ")
+    fname = '/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Raw-Data/ZINC/all.txt'
+    # Encoding time for  249456  molecules:  511.4566116333008  seconds
+    # 
+    #with open(args.smiles_input_file) as f:
+    with open(fname) as f:
+        smiles_list = [line.strip("\r\n ").split()[0] for line in f]
+
+    smiles_original = smiles_list[0:]
+
+    model = create_generative_model(args)
+
+    t0 = time.time()
+    latent = model.encode(smiles_original)
+    t1 = time.time()
+    print("Encoding time for ", len(smiles_original), " molecules: ", (t1-t0), " seconds")
+    smiles = model.decode(latent)
+    t2 = time.time()
+    print("Decoding time for ", len(smiles_original), " molecules: ", (t2-t1), " seconds")
+
+    counter = 0
+    for i in range(len(smiles_original)):
+        if smiles_original[i] != smiles[i]:
+            counter += 1
+
+    df = pd.DataFrame()
+    df['smiles_original'] = smiles_original
+    df['smiles_post'] = smiles
+    df.to_csv("/mnt/projects/ATOM/blackst/FNLGMD/Output/Test_Output/test_FNL_Decoder.csv", index=False)
+    print("Number of smiles incorrectly decoded: ", counter, " Reconstruction error: ", 100*(counter / (len(smiles_original))), "%")
 
 class JTNN(GenerativeModel):
 
@@ -229,7 +298,7 @@ class CHAR_VAE(GenerativeModel):
 
 
 def test_jtvae(args):
-    population = pd.read_csv("/mnt/projects/ATOM/blackst/GenGMD/source/evaluated_pop.csv")
+    population = pd.read_csv("/mnt/projects/ATOM/blackst/FNLGMD/source/evaluated_pop.csv")
     latent = list(population['latent'].loc[population['smiles'].isna()])
 
     print(type(latent))
@@ -238,7 +307,7 @@ def test_jtvae(args):
     #print(len(latent))
     #print(len(latent[0]))
 
-    vae = JTNN(args)
+    vae = create_generative_model(args)
 
     smiles = vae.decode(latent)
 
@@ -258,7 +327,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    test_jtvae(args)
+    test_decoder(args)
+    #test_jtvae(args)
 
 
 

@@ -61,7 +61,8 @@ class GeneticOptimizer(Optimizer):
         self.max_clones = self.params.max_clones
         self.mutation_std = self.params.mutate_std
         self.memetic_frac = self.params.memetic_frac
-        self.memetic_delta = self.params.memetic_delta
+        #self.memetic_delta = self.params.memetic_delta
+        self.memetic_delta = 1 #Need to figure out what the file path is about
         self.model_type = self.params.model_type
         if self.model_type == 'jtnn':
             #self.tree_sd = self.params.tree_sd #TEMPORARY comment for development
@@ -108,7 +109,7 @@ class GeneticOptimizer(Optimizer):
         else:
             self.max_population = self.params.max_population
 
-    def set_population(self, latent_cost_df):
+    def set_population(self, latent_cost_df): #TODO: Ideally I would remove the self.population
         self.population = latent_cost_df
         #self.population = self.population.rename(columns={"latent": "chromosome"}) #TODO: chomosome
         self.population = self.population.append(

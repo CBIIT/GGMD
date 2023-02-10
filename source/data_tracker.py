@@ -9,10 +9,10 @@ class Tracker():
     def create_tracker(self):
         with open(self.smiles_input_file) as f:
             smiles_list = [line.strip("\r\n ").split()[0] for line in f]
-        
+        smiles_list = smiles_list[10000:]
         df = pd.DataFrame({'compound_id': [], 'smiles': [], 'latent': []})
 
-        comp_ids = [i for i in range(len(smiles_list))]
+        comp_ids = [i for i in range(len(smiles_list))] #Need better compound ID
         df['compound_id'] = comp_ids
         df['smiles'] = smiles_list
         
@@ -26,10 +26,15 @@ class Tracker():
 
         return df
 
-    def update_tracker(self):
+    def update_tracker(self, population):
+        #Would it be helpful to know which 
         
-        df = pd.read_csv("data_all_generations.csv")
+        master_df = pd.read_csv("data_all_generations.csv")
 
+        combined_df = pd.concat([master_df, population]).drop_duplicates(subset='compound_id', ignore_index=True)
+        self.next_id = len(combined_df)
+
+        combined_df.to_csv("data_all_generations.csv", index=False)
 
 def test_tracker():
     # TODO: Define test for tracker

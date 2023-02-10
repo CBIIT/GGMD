@@ -1,7 +1,10 @@
-model_type: 'jtnn'
+model_type: 'jtnn-fnl'
 model_path: ''
-smiles_input_file: '/mnt/projects/ATOM/blackst/GenGMD/source/generative_models/JTNN/icml18_jtnn/data/moses/debug.txt'
+#smiles_input_file: '/mnt/projects/ATOM/blackst/FNLGMD/source/generative_models/JTNN/icml18_jtnn/data/moses/debug.txt'
+smiles_input_file: '/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Raw-Data/ZINC/all.txt'
 scorer_type: 'FNL'
+num_epochs: 1
+
 
 #Selection/Optimization params
 optimizer_type: 'geneticoptimizer'
@@ -28,10 +31,10 @@ compound_count: 0
 max_population: 0
 
 #LC JTNN
-vae_path: '/mnt/projects/ATOM/blackst/GenGMD/source/generative_models/JTNN/icml18_jtnn/fast_molvae/moses-h450z56/model.iter-400000'
-device: cpu
-vocab_path: '/mnt/projects/ATOM/blackst/GenGMD/source/generative_models/JTNN/icml18_jtnn/data/moses/vocab.txt'
+#vae_path: '/mnt/projects/ATOM/blackst/FNLGMD/source/generative_models/JTNN/icml18_jtnn/fast_molvae/moses-h450z56/model.iter-400000'
+#device: cpu
+#vocab_path: '/mnt/projects/ATOM/blackst/FNLGMD/source/generative_models/JTNN/icml18_jtnn/data/moses/vocab.txt'
 
 #FNL JTNN
-#vocab_path: '/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Vocabulary/all_vocab.txt'
-#model_path: '/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Train/MODEL-TRAIN/model.epoch-35'
+vocab_path: '/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Vocabulary/all_vocab.txt'
+model_path: '/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Train/MODEL-TRAIN/model.epoch-35'

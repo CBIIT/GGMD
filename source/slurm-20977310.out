@@ -1,0 +1,30 @@
+fsitgl-hpc014p
+/var/spool/slurmd/job20977310/slurm_script: line 18: WRK: command not found
+
+args:  Namespace(compound_count=0, config=['/mnt/projects/ATOM/blackst/FNLGMD/source/config.yaml'], costinfo_path='/mnt/projects/ATOM/blackst/lc_gmd/glo_spl/atomsci/glo_spl/examples/neurocrine_h1/neurocrine_h1_chembl_costinfo.csv', device='cpu', gene_mutate_prob=0.1, ind_mutate_prob=0.1, mate_prob=0.3, max_clones=1, max_population=0, memetic_delta=1, memetic_delta_scale=1, memetic_frac=0.4, memetic_size=25, model_path='/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Train/MODEL-TRAIN/model.epoch-35', model_type='jtnn-fnl', mutate_std=1, num_epochs=1, optimization='minimize', optimizer_type='geneticoptimizer', scorer_type='FNL', scoring_criteria=None, selection_type='tournament', smiles_input_file='/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Raw-Data/ZINC/all.txt', tourn_size=25, verbose='True', vocab_path='/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Vocabulary/all_vocab.txt')
+Traceback (most recent call last):
+  File "/mnt/projects/ATOM/blackst/FNLGMD/source/main.py", line 36, in <module>
+    generative_model = create_generative_model(args)
+  File "/mnt/projects/ATOM/blackst/FNLGMD/source/generative_network.py", line 51, in create_generative_model
+    return JTNN_FNL(params)
+  File "/mnt/projects/ATOM/blackst/FNLGMD/source/generative_network.py", line 124, in __init__
+    self.optimizer = optimizer2.create_optimizer(params)
+  File "/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py", line 23, in create_optimizer
+    return GeneticOptimizer(params)
+  File "/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py", line 73, in __init__
+    self.memetic_delta = pd.read_csv(self.memetic_delta)['Std'].values
+  File "/home/blackst/miniconda3/envs/JTVAE-CPU-P3/lib/python3.8/site-packages/pandas/util/_decorators.py", line 311, in wrapper
+    return func(*args, **kwargs)
+  File "/home/blackst/miniconda3/envs/JTVAE-CPU-P3/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 680, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "/home/blackst/miniconda3/envs/JTVAE-CPU-P3/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 575, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/home/blackst/miniconda3/envs/JTVAE-CPU-P3/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 934, in __init__
+    self._engine = self._make_engine(f, self.engine)
+  File "/home/blackst/miniconda3/envs/JTVAE-CPU-P3/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 1218, in _make_engine
+    self.handles = get_handle(  # type: ignore[call-overload]
+  File "/home/blackst/miniconda3/envs/JTVAE-CPU-P3/lib/python3.8/site-packages/pandas/io/common.py", line 667, in get_handle
+    ioargs = _get_filepath_or_buffer(
+  File "/home/blackst/miniconda3/envs/JTVAE-CPU-P3/lib/python3.8/site-packages/pandas/io/common.py", line 424, in _get_filepath_or_buffer
+    raise ValueError(msg)
+ValueError: Invalid file path or buffer object type: <class 'int'>

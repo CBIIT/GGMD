@@ -11,12 +11,17 @@ from generative_models.FNL_JTNN.fast_jtnn.datautils import tensorize
 
 from generative_models.FNL_JTNN.fast_jtnn.chemutils import enum_assemble, set_atommap, copy_edit_mol, attach_mols
 import rdkit
+from rdkit import RDLogger
 import rdkit.Chem as Chem
 import copy, math
+
+lg = rdkit.RDLogger.logger() #TODO: Attempting to suppress rdkit warnings
+lg.setLevel(rdkit.RDLogger.CRITICAL)
 
 class JTNNVAE(nn.Module):
 
     def __init__(self, vocab, hidden_size, latent_size, depthT, depthG):
+
         super(JTNNVAE, self).__init__()
         self.vocab = vocab
         self.hidden_size = hidden_size
@@ -117,6 +122,8 @@ class JTNNVAE(nn.Module):
         return all_loss, acc * 1.0 / cnt
 
     def decode(self, x_tree_vecs, x_mol_vecs, prob_decode):
+        #lg = rdkit.RDLogger.logger() #TODO: Attempting to suppress rdkit warnings
+        #lg.setLevel(rdkit.RDLogger.CRITICAL)
         #currently do not support batch decoding
         assert x_tree_vecs.size(0) == 1 and x_mol_vecs.size(0) == 1
 
@@ -156,10 +163,13 @@ class JTNNVAE(nn.Module):
 
         cur_mol = cur_mol.GetMol()
         set_atommap(cur_mol)
+        
         cur_mol = Chem.MolFromSmiles(Chem.MolToSmiles(cur_mol))
         return Chem.MolToSmiles(cur_mol) if cur_mol is not None else None
         
     def dfs_assemble(self, y_tree_mess, x_mol_vecs, all_nodes, cur_mol, global_amap, fa_amap, cur_node, fa_node, prob_decode, check_aroma):
+        #lg = rdkit.RDLogger.logger() #TODO: Attempting to suppress rdkit warnings
+        #lg.setLevel(rdkit.RDLogger.CRITICAL)
         fa_nid = fa_node.nid if fa_node is not None else -1
         prev_nodes = [fa_node] if fa_node is not None else []
 
@@ -206,6 +216,7 @@ class JTNNVAE(nn.Module):
 
             cur_mol = attach_mols(cur_mol, children, [], new_global_amap) #father is already attached
             new_mol = cur_mol.GetMol()
+
             new_mol = Chem.MolFromSmiles(Chem.MolToSmiles(new_mol))
 
             if new_mol is None: continue
@@ -303,7 +314,8 @@ class JTNNVAE(nn.Module):
         return smiles_recon
 
     def decode_2(self, x_tree_vecs, x_mol_vecs, prob_decode):
-   
+        #lg = rdkit.RDLogger.logger() #TODO: Attempting to suppress rdkit warnings
+        #lg.setLevel(rdkit.RDLogger.CRITICAL)
         #currently do not support batch decoding
         assert x_tree_vecs.size(0) == 1 and x_mol_vecs.size(0) == 1
 
@@ -344,10 +356,14 @@ class JTNNVAE(nn.Module):
 
         cur_mol = cur_mol.GetMol()
         set_atommap(cur_mol)
+
         cur_mol = Chem.MolFromSmiles(Chem.MolToSmiles(cur_mol,isomericSmiles=False))
         return Chem.MolToSmiles(cur_mol,isomericSmiles=False) if cur_mol is not None else None
 
     def dfs_assemble_2(self, iter, y_tree_mess, x_mol_vecs, all_nodes, cur_mol, global_amap, fa_amap, cur_node, fa_node, prob_decode, check_aroma):
+        #lg = rdkit.RDLogger.logger() #TODO: Attempting to suppress rdkit warnings
+        #lg.setLevel(rdkit.RDLogger.CRITICAL)
+        
         iter += 1
 
         fa_nid = fa_node.nid if fa_node is not None else -1
@@ -396,6 +412,7 @@ class JTNNVAE(nn.Module):
 
             cur_mol = attach_mols(cur_mol, children, [], new_global_amap) #father is already attached
             new_mol = cur_mol.GetMol()
+
             new_mol = Chem.MolFromSmiles(Chem.MolToSmiles(new_mol))
 
             if new_mol is None: continue
