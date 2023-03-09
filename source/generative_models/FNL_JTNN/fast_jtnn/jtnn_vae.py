@@ -240,7 +240,7 @@ class JTNNVAE(nn.Module):
 #JI
     def encode_latent_mean(self, smiles_list):
         tree_batch = [MolTree(s) for s in smiles_list]
-
+        
         _, jtenc_holder, mpn_holder = tensorize(tree_batch, self.vocab, assm=False)
         tree_vecs, _, mol_vecs = self.encode(jtenc_holder, mpn_holder)
         tree_mean = self.T_mean(tree_vecs)

@@ -1,0 +1,19 @@
+fsitgl-hpc058p
+/mnt/projects/ATOM/blackst/FNLGMD/source
+args:  Namespace(compound_count=0, config=['/mnt/projects/ATOM/blackst/FNLGMD/workspace/example_dir/config.yaml'], gene_mutate_prob=0.1, ind_mutate_prob=0.1, mate_prob=0.3, max_clones=1, max_population=0, memetic_delta=1, memetic_delta_scale=1, memetic_frac=0.4, memetic_size=25, model_path='/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Train/MODEL-TRAIN/model.epoch-35', model_type='jtnn-fnl', mutate_std=1, num_epochs=1, optimization='minimize', optimizer_type='geneticoptimizer', output_directory='/mnt/projects/ATOM/blackst/FNLGMD/workspace/example_dir/', scorer_type='FNL', selection_type='tournament', smiles_input_file='/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Raw-Data/ZINC/all.txt', tourn_size=25, verbose='True', vocab_path='/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Vocabulary/all_vocab.txt')
+classes initialized
+500  compounds in the df
+population initialized
+Population evaluated
+epoch #0
+Inside loop
+Entering optimizing
+Encoding
+moltosmiles
+load model
+gen_batches
+encode in parallel
+1
+1
+1
+slurmstepd: error: *** JOB 21321325 ON cn058 CANCELLED AT 2023-03-06T13:10:03 ***

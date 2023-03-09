@@ -49,7 +49,7 @@ class GeneticOptimizer(Optimizer):
     def __init__(self, params, **kwargs):
         super().__init__(params, **kwargs)
         self.optimizer_type = self.params.optimizer_type.lower()
-        #self.selection_type = self.params.selection_type.lower()
+        self.selection_type = self.params.selection_type.lower()
         #self.crossover_type = self.params.crossover_type.lower()
         #self.mutation_type = self.params.mutation_type.lower()
         self.input_file = self.params.smiles_input_file 
@@ -61,17 +61,23 @@ class GeneticOptimizer(Optimizer):
         self.max_clones = self.params.max_clones
         self.mutation_std = self.params.mutate_std
         self.memetic_frac = self.params.memetic_frac
-        self.memetic_delta = self.params.memetic_delta
+        #self.memetic_delta = self.params.memetic_delta
+        self.memetic_delta = 1 #Need to figure out what the file path is about
         self.model_type = self.params.model_type
         if self.model_type == 'jtnn':
-            self.tree_sd = self.params.tree_sd
-            self.molg_sd = self.params.molg_sd
+            #self.tree_sd = self.params.tree_sd #TEMPORARY comment for development
+            self.tree_sd = 4.86
+            #self.molg_sd = self.params.molg_sd #TEMPORARY comment for development
+            self.molg_sd = 4
 
+        """
         if os.path.isfile(self.memetic_delta):
             self.memetic_delta = pd.read_csv(self.memetic_delta)['Std'].values
         else:
             Log.info('memetic delta file not specified or not found; setting delta equal to 1')
             self.memetic_delta = 1
+        """
+        self.memetic_delta = 1 #TODO: Debugging
         self.memetic_delta_scale = self.params.memetic_delta_scale
         self.memetic_size = self.params.memetic_size
 
@@ -106,17 +112,19 @@ class GeneticOptimizer(Optimizer):
         else:
             self.max_population = self.params.max_population
 
-    def set_population(self, latent_cost_df):
+    def set_population(self, latent_cost_df): #TODO: Ideally I would remove the self.population
         self.population = latent_cost_df
-        self.population = self.population.rename(columns={"latent": "chromosome"})
+        #self.population = self.population.rename(columns={"latent": "chromosome"}) #TODO: chomosome
         self.population = self.population.append(
             self.retained_population, ignore_index=True
-        )
+        ) #TODO: Need to align to prepare for future pandas versions:
+        # FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
         self.population = self.population.reset_index(drop=True)
         self.population_size = len(self.population)
         print(f"latent_optimizer population_size: {self.population_size}, latent_cost_df size: {len(latent_cost_df)}, retained_df size: {len(self.retained_population)}, target population size: {self.max_population}")
         Log.info(f"latent_optimizer population_size: {self.population_size}, latent_cost_df size: {len(latent_cost_df)}, retained_df size: {len(self.retained_population)}, target population size: {self.max_population}")
-        self.chromosome_length = len(self.population["chromosome"].iloc[0])
+        #self.chromosome_length = len(self.population["chromosome"].iloc[0]) #TODO: chomosome
+        self.chromosome_length = len(self.population["latent"].iloc[0])
         if self.model_type == 'jtnn':
             self.tree_len = int(self.chromosome_length / 2)
             self.molg_len = self.chromosome_length - self.tree_len
@@ -182,7 +190,8 @@ class GeneticOptimizer(Optimizer):
 
             selected_population = pd.DataFrame()
             # get gene0 from the pool's chromosomes, for quick screen
-            selection_pool["gene0"] = np.hstack(selection_pool["chromosome"])[
+            #selection_pool["gene0"] = np.hstack(selection_pool["chromosome"])[ #TODO: chomosome
+            selection_pool["gene0"] = np.hstack(selection_pool["latent"])[
                 0 :: self.chromosome_length
             ]
 
@@ -201,7 +210,8 @@ class GeneticOptimizer(Optimizer):
                 if len(selected_population) == 0:
                     selected_population = selected_population.append(
                         selected_individual
-                    )
+                    ) #TODO: Need to align to prepare for future pandas versions:
+                    # FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
 
                     # quick screen of gene0 occurrence in the selected population
                 recurred_gene0_idx = np.where(
@@ -211,11 +221,13 @@ class GeneticOptimizer(Optimizer):
                 # if gene0 reach max_clones occurrence, going to check the whole chromosomes that are flagged from the selected_pop
                 if (self.max_clones > 0) & (recurred_gene0_count >= self.max_clones):
                     # get the chromosome from selected individual.
-                    selected_ind_chrom = selected_individual["chromosome"]
+                    #selected_ind_chrom = selected_individual["chromosome"] #TODO: chomosome
+                    selected_ind_chrom = selected_individual["latent"]
 
                     # get the flagged individuals and the chromosomes from the selected population
                     flagged_inds = selected_population.iloc[recurred_gene0_idx]
-                    flagged_chromosomes = np.hstack(flagged_inds["chromosome"]).reshape(
+                    #flagged_chromosomes = np.hstack(flagged_inds["chromosome"]).reshape( #TODO: chomosome
+                    flagged_chromosomes = np.hstack(flagged_inds["latent"]).reshape(
                         recurred_gene0_count, self.chromosome_length
                     )
 
@@ -256,7 +268,8 @@ class GeneticOptimizer(Optimizer):
                 else:
                     selected_population = selected_population.append(
                         selected_individual
-                    )
+                    ) #TODO: Need to align to prepare for future pandas versions:
+                    # FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
             selected_population.pop("gene0")
             self.population = selected_population.reset_index(drop=True)
         #######################################################################################################################
@@ -283,8 +296,8 @@ class GeneticOptimizer(Optimizer):
             Log.info(f"smiles_tournament: {n_tourn} tournaments, pool = {pool_size} after excluding {excluded_rows} with no cost")
 
             # check len for quick screen
-            selection_pool["SMILES_len"] = [
-                len(S) for S in selection_pool["SMILES"].values
+            selection_pool["smiles_len"] = [
+                len(S) for S in selection_pool["smiles"].values
             ]
 
             if self.tourn_size >= pool_size:
@@ -307,29 +320,29 @@ class GeneticOptimizer(Optimizer):
 
                 # quick screen of substring occurrence in the selected population
                 recurred_len_idx = np.where(
-                    selected_population["SMILES_len"].values
-                    == selected_individual["SMILES_len"]
+                    selected_population["smiles_len"].values
+                    == selected_individual["smiles_len"]
                 )
                 recurred_len_count = len(recurred_len_idx[0])
-                # if SMILES lengths reach max_clones occurrence,
-                # going to check the whole SMILES that are flagged from the selected_pop
+                # if smiles lengths reach max_clones occurrence,
+                # going to check the whole smiles that are flagged from the selected_pop
                 if (self.max_clones > 0) & (recurred_len_count >= self.max_clones):
-                    # get the SMILES from selected individual.
-                    selected_ind_SMILES = selected_individual["SMILES"]
+                    # get the smiles from selected individual.
+                    selected_ind_smiles = selected_individual["smiles"]
 
                     # get the flagged individuals and the chromosomes from the selected population
                     flagged_inds = selected_population.iloc[recurred_len_idx]
-                    flagged_SMILES = flagged_inds["SMILES"].values
+                    flagged_smiles = flagged_inds["smiles"].values
 
                     # calculate repeated chrom counts of the selected_individual from the selected populations
-                    recurred_SMILES_count = np.sum(
-                        selected_ind_SMILES == flagged_SMILES
+                    recurred_smiles_count = np.sum(
+                        selected_ind_smiles == flagged_smiles
                     )
 
                     # if the selected_individual indeed reached max_clones in the selected_pop,
-                    # going to remove that SMILES from the pool.
+                    # going to remove that smiles from the pool.
                     if (self.max_clones > 0) & (
-                        recurred_SMILES_count >= self.max_clones
+                        recurred_smiles_count >= self.max_clones
                     ):
                         dropped_smiles_count += 1
                         # remove the index from the selection_pool
@@ -355,15 +368,15 @@ class GeneticOptimizer(Optimizer):
                 else:
                     selected_population = selected_population.append(selected_individual)
 
-            selected_population.pop("SMILES_len")
+            selected_population.pop("smiles_len")
             pool_size = len(selection_pool)
-            Log.info(f"After tournament selection: {len(selected_population)} in population, {pool_size} in selection pool, {dropped_smiles_count} SMILES dropped from pool")
+            Log.info(f"After tournament selection: {len(selected_population)} in population, {pool_size} in selection pool, {dropped_smiles_count} smiles dropped from pool")
 
             self.population = selected_population.reset_index(drop=True)
 
         #######################################################################################################################
         # Perform tournament selection without replacement, so that each latent vector appears only once in the mating pool.
-        # As with torunament_smiles, limit the number of vectors decoding to the same SMILES string.
+        # As with smiles, limit the number of vectors decoding to the same smiles string.
 
         elif self.selection_type == 'tournament_wo_replacement':
 
@@ -372,14 +385,14 @@ class GeneticOptimizer(Optimizer):
             # make sure the index is completely reset for proper selection tracking
             selection_pool.reset_index(drop=True, inplace=True)
 
-            # Sanity check: Input latents should all have compound_id, SMILES and cost
+            # Sanity check: Input latents should all have compound_id, smiles and cost
             initial_len = len(selection_pool)
-            selection_pool = selection_pool.dropna(subset=['cost', 'compound_id', 'SMILES'])
+            selection_pool = selection_pool.dropna(subset=['cost', 'compound_id', 'smiles'])
             pool_size = len(selection_pool)
-            Log.info(f"Tournament selection without replacement: input pop size {initial_len}, {len(set(selection_pool.SMILES.values))} distinct SMILES")
+            Log.info(f"Tournament selection without replacement: input pop size {initial_len}, {len(set(selection_pool.smiles.values))} distinct smiles")
             excluded_rows = initial_len - pool_size
             if excluded_rows > 0:
-                Log.warning(f"tournament_wo_replacement: {excluded_rows} rows excluded because cost, compound_id or SMILES missing")
+                Log.warning(f"tournament_wo_replacement: {excluded_rows} rows excluded because cost, compound_id or smiles missing")
 
             # Sanity check: Compound IDs should be unique
             selection_pool = selection_pool.drop_duplicates(subset=['compound_id'])
@@ -401,24 +414,24 @@ class GeneticOptimizer(Optimizer):
 
             # Repeat tournament selection until we have enough latent vectors selected. Remove selected
             # latents from the pool so they can't be selected again. Also make sure that no more than
-            # max_clones latent vectors mapping to the same SMILES string get selected.
+            # max_clones latent vectors mapping to the same smiles string get selected.
              
             while len(selected_population) < n_tourn and len(selection_pool) >= self.tourn_size:
                 tournament = selection_pool.sample(self.tourn_size, replace=False)
                 #selected_individual = self.select_individual_from_candidates(tournament)
                 winner_idx = self.tournament_selection(tournament)
                 winner = selection_pool.loc[winner_idx].copy()
-                best_smiles = winner.SMILES
+                best_smiles = winner.smiles
                 selected_population = selected_population.append(winner)
                 selection_pool = selection_pool.drop(winner_idx)
                 smiles_count[best_smiles] = smiles_count.get(best_smiles, 0) + 1
                 if self.max_clones > 0:
                     if smiles_count[best_smiles] >= self.max_clones:
                         dropped_smiles_count += 1
-                        selection_pool = selection_pool[selection_pool.SMILES != best_smiles]
+                        selection_pool = selection_pool[selection_pool.smiles != best_smiles]
 
             pool_size = len(selection_pool)
-            Log.info(f"After tournament selection: {len(selected_population)} selected, {pool_size} remaining in pool, {dropped_smiles_count} SMILES dropped from pool")
+            Log.info(f"After tournament selection: {len(selected_population)} selected, {pool_size} remaining in pool, {dropped_smiles_count} smiles dropped from pool")
 
             self.population = selected_population.reset_index(drop=True)
 
@@ -445,12 +458,14 @@ class GeneticOptimizer(Optimizer):
 
             # to prevent drawing the two clones when multiple clones exist (max_clones > 1)
             while np.array_equal(
-                parents.iloc[0]["chromosome"], parents.iloc[1]["chromosome"]
+                #parents.iloc[0]["chromosome"], parents.iloc[1]["chromosome"] #TODO: chomosome
+                parents.iloc[0]["latent"], parents.iloc[1]["latent"]
             ):
                 redraw_idx = np.random.randint(0, len(self.population), (1, 2))
                 parents = self.population.iloc[redraw_idx[0]]
 
-            parent_chrom = np.vstack(parents["chromosome"].values)
+            #parent_chrom = np.vstack(parents["chromosome"].values) #TODO: chomosome
+            parent_chrom = np.vstack(parents["latent"].values)
             moms.append(parents.compound_id.values[0])
             pops.append(parents.compound_id.values[1])
 
@@ -458,10 +473,12 @@ class GeneticOptimizer(Optimizer):
             child_chromosome = np.where(selected_genes, parent_chrom[1], parent_chrom[0])
             child_chrom.append(child_chromosome)
 
-        children = pd.DataFrame( {"chromosome": child_chrom, "cost": np.full(n_offspring, np.nan)})
+        #children = pd.DataFrame( {"chromosome": child_chrom, "cost": np.full(n_offspring, np.nan)}) #TODO: chomosome
+        children = pd.DataFrame( {"latent": child_chrom, "cost": np.full(n_offspring, np.nan)})
         children['parent1_id'] = moms
         children['parent2_id'] = pops
-        self.population = self.population.append(children)
+        self.population = self.population.append(children) #TODO: Need to align to prepare for future pandas versions:
+        # FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
         self.population = self.population.reset_index(drop=True)
         Log.info(f"After crossover: {len(child_chrom)} offspring added, total population {len(self.population)}")
         return self
@@ -473,7 +490,8 @@ class GeneticOptimizer(Optimizer):
             memetic_candidates = self.population.dropna(subset=['cost'])
             memetic_pop_size = int(self.memetic_frac * len(memetic_candidates))
             memetic_candidates = memetic_candidates.sort_values(by='cost', ascending=True).iloc[:memetic_pop_size]
-            memetic_chromosomes = memetic_candidates['chromosome'].values
+            #memetic_chromosomes = memetic_candidates['chromosome'].values #TODO: chomosome
+            memetic_chromosomes = memetic_candidates['latent'].values
             memetic_parents = memetic_candidates['compound_id'].values
             # workaround of the issue with pandas' deepcopy (it is not that deep)
             copy_memetic_chromosomes = deepcopy(memetic_chromosomes)
@@ -487,7 +505,8 @@ class GeneticOptimizer(Optimizer):
         n_mutated = len(ind_idx)
         n_offspring_mutated = 0
         for idx in ind_idx:
-            chromosome = deepcopy(self.population["chromosome"].iloc[idx])
+            #chromosome = deepcopy(self.population["chromosome"].iloc[idx]) #TODO: chomosome
+            chromosome = deepcopy(self.population["latent"].iloc[idx])
             if self.model_type == 'jtnn':
                 # If we are using a JTNN autoencoder, split the latent vectors into tree and
                 # molecular graph parts and adjust the scale parameter according to the tree_sd
@@ -519,9 +538,10 @@ class GeneticOptimizer(Optimizer):
                     # Otherwise, the mutant has just one parent
                     self.population.at[idx, "parent1_id"] = self.population.at[idx, "compound_id"]
                     self.population.at[idx, "parent2_id"] = np.nan
-                self.population.at[idx, "chromosome"] = chromosome
+                #self.population.at[idx, "chromosome"] = chromosome #TODO: chomosome
+                self.population.at[idx, "latent"] = chromosome
                 self.population.at[idx, "cost"] = np.nan
-                self.population.at[idx, "SMILES"] = np.nan
+                self.population.at[idx, "smiles"] = np.nan
                 self.population.at[idx, "compound_id"] = np.nan
 
         # single point fixed size mutation on memetic_candidates
@@ -553,16 +573,19 @@ class GeneticOptimizer(Optimizer):
                         copy_selected_memetic_chromosome[memetic_pt] += self.memetic_delta[memetic_pt] * self.memetic_delta_scale * delta_sd
                     else:
                         copy_selected_memetic_chromosome[memetic_pt] -= self.memetic_delta[memetic_pt] * self.memetic_delta_scale * delta_sd
-                memetic_dict = dict(chromosome=copy_selected_memetic_chromosome, cost=np.nan, parent1_id=memetic_parents[idx],
+                #memetic_dict = dict(chromosome=copy_selected_memetic_chromosome, cost=np.nan, parent1_id=memetic_parents[idx], #TODO: chomosome
+                                        #parent2_id=np.nan) #TODO: chomosome
+                memetic_dict = dict(latent=copy_selected_memetic_chromosome, cost=np.nan, parent1_id=memetic_parents[idx],
                                         parent2_id=np.nan)
-                self.population = self.population.append(memetic_dict, ignore_index= True)
+                self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+                # FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
 
         Log.info(f"After mutation: {n_mutated-n_offspring_mutated} scored latents mutated, {n_offspring_mutated} crossover offspring mutated, "
                  f"{memetic_pop_size} added by memetic, total population {len(self.population)}")
 
         return self
 
-    def optimize(self, latent_cost_df):
+    def optimize(self, population):
         """
         Optimize the molecule cost in the latent space and returns optimized latent variables
         Args:
@@ -571,14 +594,16 @@ class GeneticOptimizer(Optimizer):
         return new population
         side effect set self.retained_population
         """
-        self.set_population(latent_cost_df)
+        self.set_population(population)
         self.select()
         self.crossover()
         self.mutate()
         self.retained_population = self.population.dropna(subset=['cost']).copy()
-        self.population = self.population.rename(columns={"chromosome": "latent"})
+        #self.population = self.population.rename(columns={"chromosome": "latent"}) #TODO: chomosome
         Log.info(f"After optimization, population columns are {', '.join(self.population.columns.values)}")
-        Log.info(f"After optimize: retained population {len(self.retained_population)}, total population {len(self.population)}")
+        print(f"After optimization, population columns are {', '.join(self.population.columns.values)}")
+        Log.info(f"After optimization: retained population {len(self.retained_population)}, total population {len(self.population)}")
+        print(f"After optimization: retained population {len(self.retained_population)}, total population {len(self.population)}")
         return self.population
 
 #######################################################################################################################

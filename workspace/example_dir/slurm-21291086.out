@@ -1,0 +1,450 @@
+fsitgl-hpc010p
+/mnt/projects/ATOM/blackst/FNLGMD/source
+args:  Namespace(compound_count=0, config=['/mnt/projects/ATOM/blackst/FNLGMD/workspace/example_dir/config.yaml'], gene_mutate_prob=0.1, ind_mutate_prob=0.1, mate_prob=0.3, max_clones=1, max_population=0, memetic_delta=1, memetic_delta_scale=1, memetic_frac=0.4, memetic_size=25, model_path='/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Train/MODEL-TRAIN/model.epoch-35', model_type='jtnn-fnl', mutate_std=1, num_epochs=1, optimization='minimize', optimizer_type='geneticoptimizer', output_directory='/mnt/projects/ATOM/blackst/FNLGMD/workspace/example_dir/', scorer_type='FNL', selection_type='tournament', smiles_input_file='/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Raw-Data/ZINC/all.txt', tourn_size=25, verbose='True', vocab_path='/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Vocabulary/all_vocab.txt')
+classes initialized
+population initialized
+Population evaluated
+Inside loop
+Entering optimizing
+Encoding
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:118: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:211: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:269: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  selected_population = selected_population.append(
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:480: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(children) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+/mnt/projects/ATOM/blackst/FNLGMD/source/optimizer2.py:580: FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
+Encoding computation time, Total time = 26, 27 seconds
+<class 'numpy.ndarray'>
+<class 'numpy.ndarray'>
+latent_optimizer population_size: 500, latent_cost_df size: 500, retained_df size: 0, target population size: 249456
+Decoding
+Traceback (most recent call last):
+  File "/mnt/projects/ATOM/blackst/FNLGMD/source/main.py", line 70, in <module>
+    main()
+  File "/mnt/projects/ATOM/blackst/FNLGMD/source/main.py", line 55, in main
+    population = generative_model.optimize(population)
+  File "/mnt/projects/ATOM/blackst/FNLGMD/source/generative_network.py", line 166, in optimize
+    population['smiles'] = smiles
+  File "/home/blackst/miniconda3/envs/JTVAE-CPU-P3/lib/python3.8/site-packages/pandas/core/frame.py", line 3655, in __setitem__
+    self._set_item(key, value)
+  File "/home/blackst/miniconda3/envs/JTVAE-CPU-P3/lib/python3.8/site-packages/pandas/core/frame.py", line 3832, in _set_item
+    value = self._sanitize_column(value)
+  File "/home/blackst/miniconda3/envs/JTVAE-CPU-P3/lib/python3.8/site-packages/pandas/core/frame.py", line 4535, in _sanitize_column
+    com.require_length_match(value, self.index)
+  File "/home/blackst/miniconda3/envs/JTVAE-CPU-P3/lib/python3.8/site-packages/pandas/core/common.py", line 557, in require_length_match
+    raise ValueError(
+ValueError: Length of values (500) does not match length of index (75044)

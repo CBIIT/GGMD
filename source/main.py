@@ -1,12 +1,14 @@
+print("Pre-imports")
 #Imports
 from generative_network import create_generative_model
 import argparse
 import yaml
 from yaml import Loader
 import pandas as pd
-import scorer, optimizer2
+import scorer, optimizer
 from data_tracker import Tracker
 
+"""
 def gen_dataframe(smiles_input_file):
     with open(smiles_input_file) as f:
         smiles_list = [line.strip("\r\n ").split()[0] for line in f]
@@ -16,9 +18,11 @@ def gen_dataframe(smiles_input_file):
     # TODO: Add a compound ID column. ID can just be a unique number. Need to figure out how to track which ID's have been used even if removed.
     # I also need to add a feature to track all unique compounds across all generations.
     return df
-
-if __name__ == "__main__":
-    #Parse args
+"""
+print("Outside functions")
+def main():
+    print("Before parser")
+    #Parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-config', help="Config file location *.yml", action='append', required=True)
     args = parser.parse_args()
@@ -32,13 +36,11 @@ if __name__ == "__main__":
 
     #initialize classes:
     evaluator = scorer.create_scorer(args)
-    #optimizer = optimizer2.create_optimizer(args)
-    generative_model = create_generative_model(args)
+    generative_model = create_generative_model(args) #TEMP COMMENT
     tracker = Tracker(args)
     print("classes initialized")
 
     #initialize population
-    #population = gen_dataframe(args.smiles_input_file)
     population = tracker.create_tracker()
     print("population initialized")
 
@@ -49,26 +51,23 @@ if __name__ == "__main__":
     #Begin optimizing
     #for epoch in range(args.num_epochs):
     for epoch in range(args.num_epochs):
+        print(f"epoch #{epoch}")
         print("Inside loop")
         
-        #print(population.columns)
+        population = generative_model.optimize(population) #TEMP COMMENT
 
-        ############################## Optimization ##############################
-        #population = optimizer.optimize(df)
-        population = generative_model.optimize(population)
-
-        population.to_csv("evaluated_pop.csv", index=False)
-
-        #TODO: what if we tunnel optimizing through the generative model? This way,
-        # the generative model can set up the molecules to then be sent on for optimization.
-        # We need to encode the compounds to latent space, but that is only for latent space
-        # methods. This way, we can leave it generalized for non latent-space methods to be
-        # integrated.
-        
-        #df = optimizer.optimize(df) #Temp commented out
-        ##########################################################################
+        population.to_csv(args.output_directory + "optimized_pop.csv", index=False)
         
         #evaluate population
-        #df = evaluator.evaluate(population) #Temp commented out
+        #population = evaluator.score(population) 
 
-    print("columns for population: ", population.columns)
+        population.to_csv(args.output_directory + "evaluated_pop.csv", index=False)
+
+        # Update Data Tracker
+        #tracker.update_tracker(population)
+
+    #print("columns for population: ", population.columns)
+
+if __name__ == "__main__":
+    print("THIS IS A TEST: Commented out decoder AND optimizer call in gen_net.py optimize")
+    main()

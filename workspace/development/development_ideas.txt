@@ -1,0 +1,11 @@
+Create a database to store all compounds across generations
+
+Implement chemical space method
+
+Test and compare optimization of FNL gmd vs LC gmd vs other methods for logP problem
+
+Implement forcing data types being passed to and from functions (i.e. optimize function to generative_network.py should pass in a dataframe and return a dataframe)
+
+Look into package CReM (Chemically reasonable mutations)
+
+Look at how Kevin is generalizing the genetic optimizer

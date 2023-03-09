@@ -19,12 +19,16 @@ class encode_smiles():
         self.verbose = False #default
         self.vocab_path = params.vocab_path
         self.model_path = params.model_path
+        self.counter = 0
         #self.lat_out #Remove: we are returning rather than saving to file
 
     #JI - Wrapper for encode_latent_mean 
     def wrap_encode(self, smiles):
+        self.counter += 1
+        print(self.counter)
         warnings.filterwarnings("ignore")
         mol_v = self.model.encode_latent_mean(smiles)
+        print("encoded returned")
         return mol_v
 
     def encode(self, smiles):
@@ -70,11 +74,15 @@ class encode_smiles():
 
         latent_points = []
         batches = [smiles_rdkit[i:i+self.bat_size] for i in range(0, n_data, self.bat_size)]
+        print(len(batches), " batches of smiles")
 
         #JI - Encode SMILES in parallel
-
-        all_vec = Parallel(n_jobs=self.n_cpus,batch_size=1,max_nbytes=None,mmap_mode=None,verbose=n_verb)\
+        """
+        #all_vec = Parallel(n_jobs=self.n_cpus,batch_size='auto',max_nbytes=None,mmap_mode=None,verbose=n_verb)\
+        all_vec = Parallel(n_jobs=8,batch_size='auto',max_nbytes=None,mmap_mode=None,verbose=n_verb)\
                 (delayed(self.wrap_encode)(batch) for batch in batches)
+        """
+        all_vec = self.wrap_encode(smiles_rdkit)
         print ('Encoding computation time, Total time = %.0f, %0.f seconds' % \
             ((time.time() - curr_time), (time.time() - start_time)))
         #curr_time = time.time()
@@ -85,6 +93,27 @@ class encode_smiles():
         latent_points = np.vstack(latent_points)
 
         return latent_points
+    
+def test_encoder():
+    vocab = '/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Vocabulary/all_vocab.txt'
+    model = '/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Train/MODEL-TRAIN/model.epoch-35'
+
+    encoder = encode_smiles({"vocab_path": vocab,
+                             "model_path": model})
+    
+    fname = '/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Raw-Data/ZINC/all.txt'
+    # Encoding time for  249456  molecules:  511.4566116333008  seconds
+    # 
+    #with open(args.smiles_input_file) as f:
+    with open(fname) as f:
+        smiles_list = [line.strip("\r\n ").split()[0] for line in f]
+
+    smiles_list = smiles_list[:100]
+
+    latent = encoder.encode(smiles_list)
+
+    
+
 
 class decoder():
     def __init__(self, args):
@@ -206,10 +235,12 @@ def test_decoder(args):
     print(latent)
 
 if __name__ == "__main__":
+    """
     import argparse
     import yaml
     from yaml import Loader
 
+    #Test the decoder
     parser = argparse.ArgumentParser()
     parser.add_argument('-config', help="Config file location *.yml", action='append', required=True)
     args = parser.parse_args()
@@ -222,17 +253,7 @@ if __name__ == "__main__":
 
     test_decoder(args)
 
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    test_encoder()
+    """ 

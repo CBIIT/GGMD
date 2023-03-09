@@ -1,0 +1,40 @@
+model_type: 'jtnn-fnl'
+model_path: ''
+#smiles_input_file: '/mnt/projects/ATOM/blackst/FNLGMD/source/generative_models/JTNN/icml18_jtnn/data/moses/debug.txt'
+smiles_input_file: '/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Raw-Data/ZINC/all.txt'
+output_directory: '/mnt/projects/ATOM/blackst/FNLGMD/workspace/example_dir/'
+scorer_type: 'FNL'
+num_epochs: 1
+
+#Selection/Optimization params
+optimizer_type: 'geneticoptimizer'
+tourn_size: 25
+mate_prob: 0.3
+ind_mutate_prob: 0.1
+gene_mutate_prob: 0.1
+max_clones: 1
+mutate_std: 1
+memetic_frac: 0.4
+memetic_delta: 1
+memetic_delta_scale: 1
+memetic_size: 25
+optimization: "minimize"
+verbose: "True"
+selection_type: "tournament"
+
+#LC CostInfoScore
+#costinfo_path: "/mnt/projects/ATOM/blackst/lc_gmd/glo_spl/atomsci/glo_spl/examples/neurocrine_h1/neurocrine_h1_chembl_costinfo.csv"
+#scoring_criteria: 
+#device: 'cpu'
+
+compound_count: 0
+max_population: 0
+
+#LC JTNN
+#vae_path: '/mnt/projects/ATOM/blackst/FNLGMD/source/generative_models/JTNN/icml18_jtnn/fast_molvae/moses-h450z56/model.iter-400000'
+#device: cpu
+#vocab_path: '/mnt/projects/ATOM/blackst/FNLGMD/source/generative_models/JTNN/icml18_jtnn/data/moses/vocab.txt'
+
+#FNL JTNN
+vocab_path: '/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Vocabulary/all_vocab.txt'
+model_path: '/mnt/projects/ATOM/blackst/GMD/LOGP-JTVAE-PAPER/Train/MODEL-TRAIN/model.epoch-35'
