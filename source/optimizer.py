@@ -50,8 +50,6 @@ class GeneticOptimizer(Optimizer):
         super().__init__(params, **kwargs)
         self.optimizer_type = self.params.optimizer_type.lower()
         self.selection_type = self.params.selection_type.lower()
-        #self.crossover_type = self.params.crossover_type.lower()
-        #self.mutation_type = self.params.mutation_type.lower()
         self.input_file = self.params.smiles_input_file 
         self.set_max_population_size()
         self.tourn_size = self.params.tourn_size
@@ -93,6 +91,7 @@ class GeneticOptimizer(Optimizer):
         SMILES strings in the input file. Both parameters are set by this function.
         """
 
+        """
         # Count lines in the input file, not counting the header if a CSV file
         smiles_count = 0
         with open(self.input_file, 'r') as fd:
@@ -111,10 +110,12 @@ class GeneticOptimizer(Optimizer):
             self.max_population = self.compound_count
         else:
             self.max_population = self.params.max_population
+        """
+
+        self.max_population = self.params.max_population
 
     def set_population(self, latent_cost_df): #TODO: Ideally I would remove the self.population
         self.population = latent_cost_df
-        #self.population = self.population.rename(columns={"latent": "chromosome"}) #TODO: chomosome
         self.population = self.population.append(
             self.retained_population, ignore_index=True
         ) #TODO: Need to align to prepare for future pandas versions:
@@ -123,7 +124,6 @@ class GeneticOptimizer(Optimizer):
         self.population_size = len(self.population)
         print(f"latent_optimizer population_size: {self.population_size}, latent_cost_df size: {len(latent_cost_df)}, retained_df size: {len(self.retained_population)}, target population size: {self.max_population}")
         Log.info(f"latent_optimizer population_size: {self.population_size}, latent_cost_df size: {len(latent_cost_df)}, retained_df size: {len(self.retained_population)}, target population size: {self.max_population}")
-        #self.chromosome_length = len(self.population["chromosome"].iloc[0]) #TODO: chomosome
         self.chromosome_length = len(self.population["latent"].iloc[0])
         if self.model_type == 'jtnn':
             self.tree_len = int(self.chromosome_length / 2)
@@ -178,9 +178,10 @@ class GeneticOptimizer(Optimizer):
         as parents for crossover or mutation. Several variants of tournament selection are supported, and
         are specified via the selection_type parameter.
         """
+        print("size of population before selection ", len(self.population))
         if self.selection_type == 'tournament':
-            n_tourn = int((1 - self.mate_prob - self.memetic_frac) * self.population_size)
-            selection_pool = self.population.copy(deep=True)
+            n_tourn = int((1 - self.mate_prob - self.memetic_frac) * self.population_size) #int((1 - 0.3 - 0.4) * 50) = 15
+            selection_pool = self.population.copy(deep=True) #TODO: STB: Why do we clear out self.population if we just set it?
             self.population = None  # clear the variable.
             # make sure the index is completely reset for proper selection tracking
             # TODO: check if the followings are redundant
@@ -189,44 +190,43 @@ class GeneticOptimizer(Optimizer):
             selection_pool.set_index("index", inplace=True)
 
             selected_population = pd.DataFrame()
-            # get gene0 from the pool's chromosomes, for quick screen
-            #selection_pool["gene0"] = np.hstack(selection_pool["chromosome"])[ #TODO: chomosome
+            # get gene0 from the pool's chromosomes, for quick screen #TODO: STB This comment doesn't make sense. What is quick screen?
+            #print(selection_pool["latent"]) # STB
             selection_pool["gene0"] = np.hstack(selection_pool["latent"])[
                 0 :: self.chromosome_length
             ]
-
+            #print("\nhmmmm\n ", selection_pool["gene0"]) # STB
             if self.tourn_size >= len(selection_pool):
                 raise Exception(
                     "self.tourn_size {} has to be less than the pool size {}.".format(
                         self.tourn_size, len(selection_pool)
                     )
                 )
-
+            #print("Selected individuals") #STB
             while len(selected_population) < n_tourn:
-                candidates = selection_pool.sample(self.tourn_size, replace=False)
-                selected_individual = self.select_individual_from_candidates(candidates)
+                candidates = selection_pool.sample(self.tourn_size, replace=False) # STB: Candidates is a dataframe randomly sampled from selection pool 
+                selected_individual = self.select_individual_from_candidates(candidates) # STB: This function takes the subset of candidates and picks the "best" one
 
                 # to populate the selected_population df
                 if len(selected_population) == 0:
-                    selected_population = selected_population.append(
+                    selected_population = selected_population.append( # Add the row sampled from the population to the df of selected individuals.
                         selected_individual
                     ) #TODO: Need to align to prepare for future pandas versions:
                     # FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-
-                    # quick screen of gene0 occurrence in the selected population
-                recurred_gene0_idx = np.where(
+                    #print(selected_individual) #STB
+                # quick screen of gene0 occurrence in the selected population
+                recurred_gene0_idx = np.where( # STB: This whole section seems to be trying to limit repeated latent vectors?
                     selected_population["gene0"].values == selected_individual["gene0"]
                 )
                 recurred_gene0_count = len(recurred_gene0_idx[0])
+                
                 # if gene0 reach max_clones occurrence, going to check the whole chromosomes that are flagged from the selected_pop
-                if (self.max_clones > 0) & (recurred_gene0_count >= self.max_clones):
+                if (self.max_clones > 0) & (recurred_gene0_count >= self.max_clones): 
                     # get the chromosome from selected individual.
-                    #selected_ind_chrom = selected_individual["chromosome"] #TODO: chomosome
                     selected_ind_chrom = selected_individual["latent"]
 
                     # get the flagged individuals and the chromosomes from the selected population
                     flagged_inds = selected_population.iloc[recurred_gene0_idx]
-                    #flagged_chromosomes = np.hstack(flagged_inds["chromosome"]).reshape( #TODO: chomosome
                     flagged_chromosomes = np.hstack(flagged_inds["latent"]).reshape(
                         recurred_gene0_count, self.chromosome_length
                     )
@@ -264,14 +264,22 @@ class GeneticOptimizer(Optimizer):
                         selected_population = selected_population.append(
                             selected_individual
                         )
+                        #print(selected_individual) #STB
 
                 else:
+                    #print(selected_individual) #STB
                     selected_population = selected_population.append(
                         selected_individual
                     ) #TODO: Need to align to prepare for future pandas versions:
                     # FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-            selected_population.pop("gene0")
+            selected_population.pop("gene0") #STB: I don't understand how gen0 was selected. Why is this what we are comparing to? is this supposed to just be all of the latent vectors from original population?
+            #print("Number of individuals in selected_population", selected_population.size) #STB: df.size gives us the number of rows x number of columns. Not simply the number of rows. df.size doesn't tell us the number of individuals
+            print("Number of individuals in selected_population", selected_population.shape)
+            print(selected_population)
             self.population = selected_population.reset_index(drop=True)
+            #self.population = selected_population.reset_index()
+            print(self.population)
+            print("Population_size after selection ", len(self.population))
         #######################################################################################################################
         # Perform tournament selection with checking of SMILES strings so that no more than max_clones latent vectors
         # decoding to the same SMILES string are selected.
@@ -445,11 +453,15 @@ class GeneticOptimizer(Optimizer):
     def crossover(self):
         # Uniform crossover
         #         n_offspring = self.population_size - len(self.population)
-        n_offspring = int(self.mate_prob * self.max_population)
+        print("Crossover beginning population size: ", len(self.population))
+        n_offspring = int(self.mate_prob * self.max_population) # STB: int(0.3 * 100) = 30
         parent_idx = np.random.randint(0, len(self.population), (n_offspring, 2))
+        print("parent_index ", parent_idx)
         child_chrom = []
         cols = self.population.columns.values.tolist()
         Log.info(f"Optimizer.crossover(): population columns = {', '.join(cols)}")
+        print()
+        print(f"Optimizer.crossover(): population columns = {', '.join(cols)}")
         moms = []
         pops = []
         for i in range(0, n_offspring):
@@ -458,13 +470,11 @@ class GeneticOptimizer(Optimizer):
 
             # to prevent drawing the two clones when multiple clones exist (max_clones > 1)
             while np.array_equal(
-                #parents.iloc[0]["chromosome"], parents.iloc[1]["chromosome"] #TODO: chomosome
                 parents.iloc[0]["latent"], parents.iloc[1]["latent"]
             ):
                 redraw_idx = np.random.randint(0, len(self.population), (1, 2))
                 parents = self.population.iloc[redraw_idx[0]]
 
-            #parent_chrom = np.vstack(parents["chromosome"].values) #TODO: chomosome
             parent_chrom = np.vstack(parents["latent"].values)
             moms.append(parents.compound_id.values[0])
             pops.append(parents.compound_id.values[1])
@@ -473,7 +483,6 @@ class GeneticOptimizer(Optimizer):
             child_chromosome = np.where(selected_genes, parent_chrom[1], parent_chrom[0])
             child_chrom.append(child_chromosome)
 
-        #children = pd.DataFrame( {"chromosome": child_chrom, "cost": np.full(n_offspring, np.nan)}) #TODO: chomosome
         children = pd.DataFrame( {"latent": child_chrom, "cost": np.full(n_offspring, np.nan)})
         children['parent1_id'] = moms
         children['parent2_id'] = pops
@@ -481,16 +490,18 @@ class GeneticOptimizer(Optimizer):
         # FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
         self.population = self.population.reset_index(drop=True)
         Log.info(f"After crossover: {len(child_chrom)} offspring added, total population {len(self.population)}")
+        print(f"After crossover: {len(child_chrom)} offspring added, total population {len(self.population)}")
         return self
 
     def mutate(self):
         # save a copy of the top population for memetic
+        print("Size of population before mutations", len(self.population))
         memetic_pop_size = 0
         if self.memetic_frac > 0:
             memetic_candidates = self.population.dropna(subset=['cost'])
             memetic_pop_size = int(self.memetic_frac * len(memetic_candidates))
             memetic_candidates = memetic_candidates.sort_values(by='cost', ascending=True).iloc[:memetic_pop_size]
-            #memetic_chromosomes = memetic_candidates['chromosome'].values #TODO: chomosome
+
             memetic_chromosomes = memetic_candidates['latent'].values
             memetic_parents = memetic_candidates['compound_id'].values
             # workaround of the issue with pandas' deepcopy (it is not that deep)
@@ -505,7 +516,6 @@ class GeneticOptimizer(Optimizer):
         n_mutated = len(ind_idx)
         n_offspring_mutated = 0
         for idx in ind_idx:
-            #chromosome = deepcopy(self.population["chromosome"].iloc[idx]) #TODO: chomosome
             chromosome = deepcopy(self.population["latent"].iloc[idx])
             if self.model_type == 'jtnn':
                 # If we are using a JTNN autoencoder, split the latent vectors into tree and
@@ -532,13 +542,12 @@ class GeneticOptimizer(Optimizer):
                 n_mutated += 1
                 if np.isnan(self.population.at[idx, 'cost']):
                     # Cost is already nan, so this latent vector is the result of a crossover.
-                    # In this case, the parent IDs have already been set.
+                    # In this case, the parent IDs have already been set. # TODO: STB is it worth noting somehow if this molecule has been mutated then?? Would be good for traceability to know which molecules were mutated even if already been crossed this gen
                     n_offspring_mutated += 1
                 else:
                     # Otherwise, the mutant has just one parent
                     self.population.at[idx, "parent1_id"] = self.population.at[idx, "compound_id"]
                     self.population.at[idx, "parent2_id"] = np.nan
-                #self.population.at[idx, "chromosome"] = chromosome #TODO: chomosome
                 self.population.at[idx, "latent"] = chromosome
                 self.population.at[idx, "cost"] = np.nan
                 self.population.at[idx, "smiles"] = np.nan
@@ -573,14 +582,14 @@ class GeneticOptimizer(Optimizer):
                         copy_selected_memetic_chromosome[memetic_pt] += self.memetic_delta[memetic_pt] * self.memetic_delta_scale * delta_sd
                     else:
                         copy_selected_memetic_chromosome[memetic_pt] -= self.memetic_delta[memetic_pt] * self.memetic_delta_scale * delta_sd
-                #memetic_dict = dict(chromosome=copy_selected_memetic_chromosome, cost=np.nan, parent1_id=memetic_parents[idx], #TODO: chomosome
-                                        #parent2_id=np.nan) #TODO: chomosome
                 memetic_dict = dict(latent=copy_selected_memetic_chromosome, cost=np.nan, parent1_id=memetic_parents[idx],
                                         parent2_id=np.nan)
                 self.population = self.population.append(memetic_dict, ignore_index= True) #TODO: Need to align to prepare for future pandas versions:
                 # FutureWarning: The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
 
         Log.info(f"After mutation: {n_mutated-n_offspring_mutated} scored latents mutated, {n_offspring_mutated} crossover offspring mutated, "
+                 f"{memetic_pop_size} added by memetic, total population {len(self.population)}")
+        print(f"After mutation: {n_mutated-n_offspring_mutated} scored latents mutated, {n_offspring_mutated} crossover offspring mutated, "
                  f"{memetic_pop_size} added by memetic, total population {len(self.population)}")
 
         return self
@@ -598,8 +607,8 @@ class GeneticOptimizer(Optimizer):
         self.select()
         self.crossover()
         self.mutate()
+        print("number of na's in cost column", self.population['cost'].isna().sum()) #STB
         self.retained_population = self.population.dropna(subset=['cost']).copy()
-        #self.population = self.population.rename(columns={"chromosome": "latent"}) #TODO: chomosome
         Log.info(f"After optimization, population columns are {', '.join(self.population.columns.values)}")
         print(f"After optimization, population columns are {', '.join(self.population.columns.values)}")
         Log.info(f"After optimization: retained population {len(self.retained_population)}, total population {len(self.population)}")

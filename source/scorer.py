@@ -35,17 +35,21 @@ class FNL_Scorer(Scorer):
             smi = MolToSmiles(mol,isomericSmiles=False)
             smiles_rdkit.append(smi)
         
+        print("Length of smiles_rdkit", len(smiles_rdkit))
+        
         logP_values = []
         for i in range(len(smiles_rdkit)):
             logP_values.append(Descriptors.MolLogP(MolFromSmiles(smiles_rdkit[ i ])))
-        
+        print("LogP ", logP_values, " length ", len(logP_values))
         SA_scores = []
         for i in range(len(smiles_rdkit)):
             SA_scores.append(-sascorer.calculateScore(MolFromSmiles(smiles_rdkit[ i ])))
-
+        print("SA ", SA_scores, " length ", len(SA_scores))
         cycle_scores = []
+        print("cycle_list:")
         for i in range(len(smiles_rdkit)):
             cycle_list = nx.cycle_basis(nx.Graph(rdmolops.GetAdjacencyMatrix(MolFromSmiles(smiles_rdkit[ i ]))))
+            print(cycle_list)
             if len(cycle_list) == 0:
                 cycle_length = 0
             else:
@@ -55,16 +59,21 @@ class FNL_Scorer(Scorer):
             else:
                 cycle_length = cycle_length - 6
             cycle_scores.append(-cycle_length)
-        
+        print("Cycle ", cycle_scores, " length ", len(cycle_scores))
         SA_scores_normalized = (np.array(SA_scores) - np.mean(SA_scores)) / np.std(SA_scores)
         logP_values_normalized = (np.array(logP_values) - np.mean(logP_values)) / np.std(logP_values)
         cycle_scores_normalized = (np.array(cycle_scores) - np.mean(cycle_scores)) / np.std(cycle_scores)
-        
+        print("SA norm ", SA_scores_normalized)
+        print("logp norm ", logP_values_normalized)
+        print("cycle norm", cycle_scores_normalized)
         targets = SA_scores_normalized + logP_values_normalized + cycle_scores_normalized
         #population['score'] = targets # dev: changing to 'cost' to align with LC cost info scorer. Unsure which is better for long term
         #TODO: verify if score needs to be negative to better align with CostInfoScore
-        population['cost'] = targets
-        
+        #population['cost'] = targets
+        population['fitness'] = targets #STB: Changing cost/score to fitness to align with GA terminology 
+        print("scorer")
+        print(targets)
+        print(population['fitness'])
         return population
 
 

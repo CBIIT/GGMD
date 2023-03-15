@@ -1,6 +1,7 @@
 import pandas as pd
 import argparse, yaml
 from yaml import Loader
+from random import sample
 
 class Tracker():
     
@@ -8,36 +9,49 @@ class Tracker():
         self.next_id = 0
         self.smiles_input_file = args.smiles_input_file
         self.output_directory = args.output_directory
-        
-    def create_tracker(self):
-        with open(self.smiles_input_file) as f:
-            smiles_list = [line.strip("\r\n ").split()[0] for line in f]
-        smiles_list = smiles_list[:50]
-        df = pd.DataFrame({'compound_id': [], 'smiles': [], 'latent': []})
+        self.generation = 0
+        self.initial_pop_size = args.initial_pop_size
 
-        comp_ids = [i for i in range(len(smiles_list))] #Need better compound ID
-        df['compound_id'] = comp_ids
-        df['smiles'] = smiles_list
-        print(len(smiles_list), " compounds in the df")
-        df.to_csv(self.output_directory + "data_all_generations.csv", index=False)
+    def init_population(self):
+        with open(self.smiles_input_file) as f: 
+            smiles_list = [line.strip("\r\n ").split()[0] for line in f]
         
-        # TODO: Add a compound ID column. ID can just be a unique number. Need to figure out how to track which ID's have been used even if removed.
-        # I also need to add a feature to track all unique compounds across all generations.
+        smiles_list = sample(smiles_list, self.initial_pop_size)
+        comp_ids = [i for i in range(len(smiles_list))] #TODO: Do we need a better compound id system?
+
+        population = pd.DataFrame()
+        population['compound_id'] = comp_ids
+        population['smiles'] = smiles_list
 
         self.next_id = len(comp_ids)
 
-        return df
+        return population
+        
+    def create_tracker(self, population):
+
+        population['generation'] = [self.generation for _ in range(len(population))]
+        
+        self.master_df = population
 
     def update_tracker(self, population):
-        #Would it be helpful to know which 
+        population.reset_index(drop=True, inplace=True)
+        print(population)
+
+        ids = [i for i in range(self.next_id, self.next_id + len(population))]
+        population['compound_id'] = ids
+
+        self.generation += 1
+        population['generation'] = [self.generation for _ in range(len(population))]
         
-        master_df = pd.read_csv(self.output_directory + "data_all_generations.csv")
+        self.master_df = pd.concat([self.master_df, population])
+        self.next_id = len(self.master_df)
 
-        combined_df = pd.concat([master_df, population]).drop_duplicates(subset='compound_id', ignore_index=True)
-        self.next_id = len(combined_df)
+        population.drop(['generation', 'parent1_id', 'parent2_id'], axis=1)
+        return population
+    
+    def publish_data(self):
 
-        combined_df.to_csv(self.output_directory + "data_all_generations.csv", index=False)
-
+        self.master_df.to_csv(self.output_directory + "data_all_generations.csv", index=False)
 
 
 def test_tracker():
@@ -55,10 +69,10 @@ def test_tracker():
 
     tracker = Tracker(args)
     df = tracker.create_tracker()
-    
-    assert tracker.next_id == 500
-    assert list(df.columns) == ['compound_id', 'smiles', 'latent']
-    assert len(df) == 500
+
+    population = pd.read_csv("/mnt/projects/ATOM/blackst/FNLGMD/workspace/example_dir/optimized_pop.csv")
+
+    tracker.update_tracker(population)
 
     
 if __name__ == "__main__":

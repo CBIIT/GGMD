@@ -1,36 +1,21 @@
-import sys
-import re
 import pandas as pd
-#import torch
-#import torch.multiprocessing as mp
-import pdb
 import numpy as np
-import ast
 import argparse
 import logging
 import yaml
 import time
 from yaml import Loader
 
-import optimizer
+import optimizer, new_optimizer
 
 from generative_models.FNL_JTNN.fast_jtnn.gen_latent import encode_smiles, decoder
 from generative_models.JTNN.VAEUtils import DistributedEvaluator
-#from rdkit import Chem
-#from rdkit import DataStructs
-#from rdkit.Chem import AllChem
 
 Log = logging.getLogger(__name__)
 
 # Hack to keep molvs package from issuing debug message on bad Unicode string
 molvs_log = logging.getLogger('molvs')
 molvs_log.setLevel(logging.WARNING)
-
-#from moses.models_storage import ModelsStorage
-#from atomsci.glo.generative_networks.VAEUtils import DistributedEvaluator
-#from atomsci.glo import GLOParamParser
-#from atomsci.ddm.utils.struct_utils import base_smiles_from_smiles
-
 
 def create_generative_model(params):
     """
@@ -63,49 +48,6 @@ class GenerativeModel(object):
         MJT Note: do we need the **kwargs argument?
         """
         self.params = params
-
-    def load_txt_to_encode(self, txt_filepath):
-        """
-        Loads in a text file of SMLIES strings specified in txt_filepath
-
-        Args:
-            txt_filepath (str): The full path to the text file containing SMILES strings (expects SMILES strings to be
-                separated by a newline)
-
-        Returns: self.SMILES (list (str)): list of the SMILES strings
-
-        """
-        with open(txt_filepath, "r") as file_handle:
-            SMILES = file_handle.readlines()
-            SMILES = [smi.rstrip("\n") for smi in SMILES]
-        self.SMILES = SMILES
-
-    def sanitize(self):
-        """
-        Sanitize the SMILES in self.SMILES. Dependent on self.SMILES attribute
-
-        Returns: self.SMILES (list (str)): list of the sanitized SMILES strings
-        """
-        # TODO: Add a Kekulize option to base_smiles_from_smiles
-        self.SMILES = base_smiles_from_smiles(
-            orig_smiles=self.SMILES,
-            useIsomericSmiles=True,
-            removeCharges=False,
-            workers=1,
-        )
-        return self
-
-    def encode(self):
-        """
-        encode smiles not implemented in super class
-        """
-        raise NotImplementedError
-
-    def decode(self):
-        """
-        decode smiles not implemented in super class
-        """
-        raise NotImplementedError
     
     def optimize(self):
         """
@@ -121,29 +63,79 @@ class JTNN_FNL(GenerativeModel):
         self.encoder = encode_smiles(params)
         self.decoder = decoder(params)
         self.is_first_epoch = True
-        self.optimizer = optimizer.create_optimizer(params)
-        
+
+        #New optimizer structure STB
+        self.optimizer = new_optimizer.create_optimizer(params)
+        self.mate_prob = params.mate_prob
+        self.max_population = params.max_population
 
     def encode(self, smiles):
-        print("Encoding")
-        latent = self.encoder.encode(smiles)
+        print("Encoding ", len(smiles), " molecules")
+        chromosome = self.encoder.encode(smiles)
         
-        print(type(latent))
-        print(type(latent[0]))
-        return list(latent)
+        return list(chromosome)
 
-    def decode(self, latent):
-        print("Decoding ", len(latent), " molecules")
-        #smiles = self.decoder.decode(latent)
+    def decode(self, chromosome):
+        print("Decoding ", len(chromosome), " molecules")
         
         # Parallel:
-        #smiles = self.decoder.decode_simple_2(latent)
+        #smiles = self.decoder.decode_simple_2(chromosome)
 
         # Not parallel:
-        smiles = self.decoder.decode_simple(latent)
+        smiles = self.decoder.decode_simple(chromosome)
         
         return smiles
         
+    def crossover(self, population):
+        print("Crossover beginning population size: ", len(population))
+        num_children = int(self.mate_prob * self.max_population) #STB int((0.3 * 100)) = 30
+        parents_idx = np.random.randint(0, len(population), (num_children, 2)) #Sets up the indexes for parents in shape [[parent1, parent2], ...]
+        
+        parent_1 = []
+        parent_2 = []
+        child_chrom = []
+        for i in range(num_children):
+            parents = population.iloc[parents_idx[i]]
+            parent_chrom = np.vstack(parents["chromosome"].values)
+            parent_1.append(parents.compound_id.values[0])
+            parent_2.append(parents.compound_id.values[1])
+
+            selected_genes = np.random.randint(0, 2, self.chromosome_length)
+            child_chromosome = np.where(selected_genes, parent_chrom[1], parent_chrom[0])
+            child_chrom.append(child_chromosome)
+
+        children_df = pd.DataFrame({"chromosome": child_chrom, "fitness": np.full(num_children, np.nan), "parent1_id": parent_1, "parent2_id": parent_2})
+        
+        population = pd.concat([population, children_df])
+        population.reset_index(drop=True, inplace=True)
+        print("Number of children: ", len(children_df), " length of total population: ", len(population))
+        
+        return population
+    
+    def mutation(self, population):
+        #Need to implement mutations
+        pass
+
+    def sort(self, population):
+        """
+        This function splits the population into two sets: one set that contains the new individuals and one set that contains the unchanged individuals
+        The new individuals need to be decoded, scored and added to the data tracker. The unchanged individuals have already been decoded, scored and tracked.
+        This function sends the unchanged individuals to the genetic optimizer which stores the individuals until the next generation and returns the new
+        individuals to be decoded, scored, and tracked
+        Paramters:
+            - population: dataframe of whole population
+        Returns:
+            - population_of_new_individuals: Pandas DataFrame of the individuals created in this generation
+        """
+
+        #Surviving individuals have real values for the fitness, smiles, and compound_id columns
+        retained_population = population[population['fitness'].isna() == False]
+        retained_population.drop(['parent1_id', 'parent2_id'], axis=1, inplace=True)
+        self.optimizer.set_retained_population(retained_population)
+
+        #Individuals that have been created this generation have a NaN associated with fitness, smiles, and compound_id columns
+        population_of_new_individuals = population[population['compound_id'].isna()]
+        return population_of_new_individuals
 
     def optimize(self, population):
         """
@@ -153,34 +145,42 @@ class JTNN_FNL(GenerativeModel):
         for scoring.
 
         Arguments:
-        population - Pandas dataframe containing columns for id, smiles, and cost
+        population - Pandas dataframe containing columns for id, smiles, and fitness
 
         Returns: 
         population - Pandas dataframe containing new smiles strings, ids, and 
         """
         
-        print("Entering optimizing")
-        
         if self.is_first_epoch:
             #Encode:
-            smiles = population['smiles']
-            latent = self.encode(smiles)
             
-            assert len(smiles) == len(latent)
+            smiles = population['smiles']
+            chromosome = self.encode(smiles)
 
-            population['latent'] = latent
+            
+            assert len(smiles) == len(chromosome)
+
+            population['chromosome'] = chromosome
+
+            self.chromosome_length = len(population["chromosome"].iloc[0]) #When I set self.population, this can be moved potentially
+
             self.is_first_epoch = False
-        # TEMP COMMENT
+
         #Optimize:
         print("Optimizing")
+
         population = self.optimizer.optimize(population)
-        
+        population = self.crossover(population=population)
+        #populaiton = self.mutate(population)
+
+        print("sort")
+        population = self.sort(population)
+
         #Decode:
-        smiles = self.decode(population['latent'].tolist())
+        smiles = self.decode(population['chromosome'].tolist())
 
         population['smiles'] = smiles
-
-        assert len(smiles) == len(latent)
+        print("Shape of population: ", population.shape)
         
         return population
 
@@ -199,10 +199,10 @@ def test_decoder(args):
     model = create_generative_model(args)
 
     t0 = time.time()
-    latent = model.encode(smiles_original)
+    chromosome = model.encode(smiles_original)
     t1 = time.time()
     print("Encoding time for ", len(smiles_original), " molecules: ", (t1-t0), " seconds")
-    smiles = model.decode(latent)
+    smiles = model.decode(chromosome)
     t2 = time.time()
     print("Decoding time for ", len(smiles_original), " molecules: ", (t2-t1), " seconds")
 
@@ -211,10 +211,6 @@ def test_decoder(args):
         if smiles_original[i] != smiles[i]:
             counter += 1
 
-    #df = pd.DataFrame()
-    #df['smiles_original'] = smiles_original
-    #df['smiles_post'] = smiles
-    #df.to_csv("./test_output/test_FNL_Decoder.csv", index=False)
     print("Number of smiles incorrectly decoded: ", counter, " Reconstruction error: ", 100*(counter / (len(smiles_original))), "%")
 
 
@@ -237,11 +233,11 @@ class JTNN(GenerativeModel):
 
     def encode(self, population):
         smiles = population['smiles'].tolist()
-        latent, keep_compounds, dataset = self.vae.encode_smiles(smiles) #TODO: do we need this returned variable: dataset???
+        chromosome, keep_compounds, dataset = self.vae.encode_smiles(smiles) #TODO: do we need this returned variable: dataset???
         print("smiles encoded")
 
         population = population.iloc[keep_compounds]
-        population['latent'] = list(latent)
+        population['chromosome'] = list(chromosome)
         #TODO: Look into this warning:
         #/mnt/projects/ATOM/blackst/GenGMD/source/generative_network.py:149: SettingWithCopyWarning: 
         #A value is trying to be set on a copy of a slice from a DataFrame.
@@ -254,21 +250,21 @@ class JTNN(GenerativeModel):
         # that have not previously been encoded. This would save time over generations. 
         # Need to continue to explore how to handle removed compounds.
 
-        latent, keep_compounds, dataset = self.vae.encode_smiles(smiles) #TODO: do we need this returned variable: dataset???
+        chromosome, keep_compounds, dataset = self.vae.encode_smiles(smiles) #TODO: do we need this returned variable: dataset???
 
-        return smiles, latent
+        return smiles, chromosome
         
-    def decode(self, latent):
+    def decode(self, chromosome):
 
-        if len(latent) == 0:
-            raise Exception("the latent seems emtpy...")
+        if len(chromosome) == 0:
+            raise Exception("the chromosome seems emtpy...")
 
-        if type(latent) is list:
-            latent = [np.asarray(l) for l in latent]
+        if type(chromosome) is list:
+            chromosome = [np.asarray(l) for l in chromosome]
         else:
-            print(type(latent))
+            print(type(chromosome))
 
-        smiles, _ = self.vae.decode_smiles(latent)
+        smiles, _ = self.vae.decode_smiles(chromosome)
         
         return smiles
 
@@ -277,12 +273,12 @@ class JTNN(GenerativeModel):
         # that have not previously been encoded. This would save time over generations. 
         # Need to continue to explore how to handle removed compounds.
 
-        smiles_to_encode = population['smiles'].loc[population['latent'].isna()]
+        smiles_to_encode = population['smiles'].loc[population['chromosome'].isna()]
 
-        latent = self.encode_test(smiles_to_encode)
+        chromosome = self.encode_test(smiles_to_encode)
 
-        for s, l in zip(smiles_to_encode, latent):
-            population['latent'].loc[population['smiles'] == s] = l
+        for s, l in zip(smiles_to_encode, chromosome):
+            population['chromosome'].loc[population['smiles'] == s] = l
 
         population = self.optimizer.optimize(population)
     
@@ -292,12 +288,12 @@ class JTNN(GenerativeModel):
         population = self.optimizer.optimize(population)
 
 
-        latent = list(population['latent'].loc[population['smiles'].isna()])
+        chromosome = list(population['chromosome'].loc[population['smiles'].isna()])
 
-        print(type(latent))
-        smiles = self.decode(latent)
-        for s, l in zip(smiles, latent):
-            population['smiles'].loc[population['latent'] == l] = s
+        print(type(chromosome))
+        smiles = self.decode(chromosome)
+        for s, l in zip(smiles, chromosome):
+            population['smiles'].loc[population['chromosome'] == l] = s
 
         #TODO: Write test functions for 
 
@@ -319,17 +315,17 @@ class CHAR_VAE(GenerativeModel):
 
 def test_jtvae(args):
     population = pd.read_csv("/mnt/projects/ATOM/blackst/FNLGMD/source/evaluated_pop.csv")
-    latent = list(population['latent'].loc[population['smiles'].isna()])
+    chromosome = list(population['chromosome'].loc[population['smiles'].isna()])
 
-    print(type(latent))
-    print(type(latent[0]))
-    #print(type(np.asarray(latent)))
-    #print(len(latent))
-    #print(len(latent[0]))
+    print(type(chromosome))
+    print(type(chromosome[0]))
+    #print(type(np.asarray(chromosome)))
+    #print(len(chromosome))
+    #print(len(chromosome[0]))
 
     vae = create_generative_model(args)
 
-    smiles = vae.decode(latent)
+    smiles = vae.decode(chromosome)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

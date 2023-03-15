@@ -9,3 +9,7 @@ Implement forcing data types being passed to and from functions (i.e. optimize f
 Look into package CReM (Chemically reasonable mutations)
 
 Look at how Kevin is generalizing the genetic optimizer
+
+
+In optimizer.select method, df.sample can have a parameter called weights which allows you to assign a column. Rows with larger
+values in that column are more likely to be sampled. Could be a potential to weight the sampling towards stronger molecules.

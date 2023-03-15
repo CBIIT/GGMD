@@ -19,7 +19,7 @@ memetic_delta: 1
 memetic_delta_scale: 1
 memetic_size: 25
 optimization: "maximize" #STB: Being replaced with optima_type
-optima_type: "maximize"
+optima_type: "maxima"
 verbose: "True"
 selection_type: "tournament"
 
