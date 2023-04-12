@@ -4,26 +4,25 @@ from yaml import Loader
 from random import sample
 
 class Tracker():
-    
     def __init__(self, args):
-        self.next_id = 0
-        self.smiles_input_file = args.smiles_input_file
-        self.output_directory = args.output_directory
+        self._next_id = 0
+        self._smiles_input_file = args.smiles_input_file
+        self._output_directory = args.output_directory
         self.generation = 0
-        self.initial_pop_size = args.initial_pop_size
+        self._initial_pop_size = args.initial_pop_size
 
     def init_population(self):
-        with open(self.smiles_input_file) as f: 
+        with open(self._smiles_input_file) as f: 
             smiles_list = [line.strip("\r\n ").split()[0] for line in f]
         
-        smiles_list = sample(smiles_list, self.initial_pop_size)
-        comp_ids = [i for i in range(len(smiles_list))] #TODO: Do we need a better compound id system?
+        smiles_list = sample(smiles_list, self._initial_pop_size)
+        comp_ids = [i for i in range(len(smiles_list))]
 
         population = pd.DataFrame()
         population['compound_id'] = comp_ids
         population['smiles'] = smiles_list
 
-        self.next_id = len(comp_ids)
+        self._next_id = len(comp_ids)
 
         return population
         
@@ -35,23 +34,22 @@ class Tracker():
 
     def update_tracker(self, population):
         population.reset_index(drop=True, inplace=True)
-        print(population)
 
-        ids = [i for i in range(self.next_id, self.next_id + len(population))]
+        ids = [i for i in range(self._next_id, self._next_id + len(population))]
         population['compound_id'] = ids
 
         self.generation += 1
+        #TODO: We should add a feature here to track all the generations that a molecule survived in.
         population['generation'] = [self.generation for _ in range(len(population))]
         
         self.master_df = pd.concat([self.master_df, population])
-        self.next_id = len(self.master_df)
+        self._next_id = len(self.master_df)
 
-        population.drop(['generation', 'parent1_id', 'parent2_id'], axis=1)
+        population.drop(['generation', 'parent1_id', 'parent2_id'], axis=1, inplace=True)
         return population
     
     def publish_data(self):
-
-        self.master_df.to_csv(self.output_directory + "data_all_generations.csv", index=False)
+        self.master_df.to_csv(self._output_directory + "data_all_generations.csv", index=False)
 
 
 def test_tracker():

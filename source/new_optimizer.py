@@ -1,9 +1,5 @@
-import os
-import numpy as np
 import pandas as pd
-
-import argparse
-import yaml
+import argparse, yaml
 from yaml import Loader
 
 def create_optimizer(params):
@@ -23,6 +19,7 @@ def create_optimizer(params):
     else:
         raise ValueError("Unknown optimizer_type %s" % params.optimizer_type)
     
+
 class Optimizer(object):
     def __init__(self, params, **kwargs):
         self.params = params
@@ -40,6 +37,7 @@ class Optimizer(object):
         """
         raise NotImplementedError
 
+
 class GeneticOptimizer(Optimizer):
     def __init__(self, params):
         self.retained_population = pd.DataFrame()
@@ -51,12 +49,12 @@ class GeneticOptimizer(Optimizer):
 
     def optimize(self, population):
         self.population = pd.concat([population, self.retained_population])
-        self.population.reset_index(inplace=True)
+        self.population.reset_index(drop=True, inplace=True)
         self.population_size = len(self.population)
         self.chromosome_length = len(self.population["chromosome"].iloc[0]) #STB: aligning with GA language in generalizing code
 
         print(f"Combined population size: {self.population_size}, new population size: {len(population)}, retained_df size: {len(self.retained_population)}, target population size: {self.max_population}")
-
+        
         self.select()
         return self.population
 
@@ -64,6 +62,8 @@ class GeneticOptimizer(Optimizer):
         self.retained_population = unchanged_individuals
 
     def tournament_selection(self, selection_pool):
+        selection_pool[["fitness", "compound_id"]] = selection_pool[["fitness", "compound_id"]].apply(pd.to_numeric)
+        
         if self.optima_type.lower() == "minima":
             return selection_pool.fitness.idxmin()
         elif self.optima_type.lower() == "maxima":
@@ -83,14 +83,15 @@ class GeneticOptimizer(Optimizer):
                 selection_pool = self.population.sample(len(self.population), replace=False) #TODO: Can create an alternative WITH replacement
             else:
                 selection_pool = self.population.sample(self.tourn_size, replace=False) #TODO: Can create an alternative WITH replacement
+            
             selected_individual = self.tournament_selection(selection_pool)
 
             #Now we can add the selected individual to the selected_population and remove it from the self.population
             # so that we do not have repeated individuals in our selected population. This can lead to false convergence
-            print("selected_individual", selected_individual)
-            print("selection_pool ", selection_pool)
+            
             selected_population.loc[len(selected_population.index)] = selection_pool.loc[selected_individual]
-            self.population.drop([selected_individual], inplace=True)
+            #TODO: Do we need to allow repeated individuals as the population converges? 
+            self.population.drop([selected_individual], inplace=True) 
         
         #Reset the self.population to contain the selected individuals that will be used for creation of next generation
         self.population = selected_population.reset_index(drop=True)

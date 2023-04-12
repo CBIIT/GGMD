@@ -3,13 +3,13 @@ from generative_network import create_generative_model
 import argparse
 import yaml
 from yaml import Loader
-import pandas as pd
-import scorer, optimizer
+from scorer import create_scorer
 from data_tracker import Tracker
-
 
 def main():
     #Parse arguments
+    #TODO: Need to build out a formal argument parser to help users. Should set up what parameters are 
+    # required and which aren't. Then we can provide default values for some variables.
     parser = argparse.ArgumentParser()
     parser.add_argument('-config', help="Config file location *.yml", action='append', required=True)
     args = parser.parse_args()
@@ -21,8 +21,8 @@ def main():
     args = parser.parse_args()
 
     #initialize classes:
-    evaluator = scorer.create_scorer(args)
-    generative_model = create_generative_model(args) #TEMP COMMENT
+    evaluator = create_scorer(args)
+    generative_model = create_generative_model(args) 
     tracker = Tracker(args)
     print("classes initialized")
 
@@ -38,21 +38,17 @@ def main():
     #Begin optimizing
     for epoch in range(args.num_epochs):
         print(f"epoch #{epoch}")
-        
+
         population = generative_model.optimize(population)
         
         #evaluate population
         population = evaluator.score(population) 
 
-        #print(population)
-
         # Update Data Tracker
         population = tracker.update_tracker(population)
-
+    print(population)
     print("columns for population: ", population.columns)
     tracker.publish_data()
 
 if __name__ == "__main__":
     main()
-    #TODO: Something is happening with scoring function where sometimes it returns nan and other times it returns values. 
-    # Nan when cycle == 0

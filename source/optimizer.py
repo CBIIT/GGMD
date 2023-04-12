@@ -66,7 +66,7 @@ class GeneticOptimizer(Optimizer):
             #self.tree_sd = self.params.tree_sd #TEMPORARY comment for development
             self.tree_sd = 4.86
             #self.molg_sd = self.params.molg_sd #TEMPORARY comment for development
-            self.molg_sd = 4
+            self.molg_sd = 0.0015
 
         """
         if os.path.isfile(self.memetic_delta):

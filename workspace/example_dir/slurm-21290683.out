@@ -1,8 +1,0 @@
-fsitgl-hpc010p
-/mnt/projects/ATOM/blackst/FNLGMD/source
-Traceback (most recent call last):
-  File "/mnt/projects/ATOM/blackst/FNLGMD/source/main.py", line 77, in <module>
-    main()
-  File "/mnt/projects/ATOM/blackst/FNLGMD/source/main.py", line 29, in main
-    with open(conf_fname, 'r') as f:
-FileNotFoundError: [Errno 2] No such file or directory: '/mnt/projects/ATOM/blackst/FNLGMD/source/config.yaml'

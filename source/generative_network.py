@@ -6,7 +6,7 @@ import yaml
 import time
 from yaml import Loader
 
-import optimizer, new_optimizer
+import new_optimizer
 
 from generative_models.FNL_JTNN.fast_jtnn.gen_latent import encode_smiles, decoder
 from generative_models.JTNN.VAEUtils import DistributedEvaluator
@@ -68,6 +68,10 @@ class JTNN_FNL(GenerativeModel):
         self.optimizer = new_optimizer.create_optimizer(params)
         self.mate_prob = params.mate_prob
         self.max_population = params.max_population
+        self.mutate_prob = params.mutate_prob
+        self.mutation_std = params.mutation_std
+        self.tree_sd = 4.86
+        self.molg_sd = 0.0015
 
     def encode(self, smiles):
         print("Encoding ", len(smiles), " molecules")
@@ -112,9 +116,47 @@ class JTNN_FNL(GenerativeModel):
         
         return population
     
-    def mutation(self, population):
-        #Need to implement mutations
-        pass
+    def mutate(self, population):
+        #TODO: Need to test this method. My question is that we need to decide if mutations
+        # should happen in place or if a mutated individual should create a new individual in 
+        # the population. Mutations happen after crossover and can happen to new or old individuals
+
+        mut_indices = np.where(np.random.rand(len(population)) < self.mutate_prob)[0]
+        print("Mut indicies: ", mut_indices, "\t length ", len(mut_indices))
+
+        for idx in mut_indices:
+            chromosome = population['chromosome'].iloc[idx]
+            print("Chromosome: ", chromosome)
+            print("length Chromosome: ", len(chromosome))
+            
+
+            tree_vec, mol_vec = np.hsplit(chromosome, 2)
+
+            tree_mut_ind = np.where(np.random.rand(len(tree_vec)) < self.mutate_prob)
+            tree_vec[tree_mut_ind] = np.random.normal(loc=tree_vec[tree_mut_ind], scale=self.tree_sd * self.mutation_std)
+            
+            mol_mut_ind = np.where(np.random.rand(len(mol_vec)) < self.mutate_prob)
+            mol_vec[mol_mut_ind] = np.random.normal(loc=mol_vec[mol_mut_ind], scale=self.molg_sd * self.mutation_std)
+
+            
+            num_pts_mutated = len(tree_mut_ind) + len(mol_mut_ind)
+
+            if num_pts_mutated > 0:
+                chromosome = np.concatenate([tree_vec, mol_vec])
+
+                if np.isnan(population['fitness'].iloc[idx]) == False:
+                    # If the individuals fitness is not nan, then this is an individual
+                    # from a previous generation. We need to reset fitness, smiles, parent ids
+                    # and compound_id.
+                    population['parent1_id'].iloc[idx] = population['compound_id'].iloc[idx]
+                    population['parent2_id'].iloc[idx] = np.nan
+                    population['smiles'].iloc[idx] = np.nan
+                    population['fitness'].iloc[idx] = np.nan
+                    population['compound_id'].iloc[idx] = np.nan
+
+                population['chromosome'].iloc[idx] = chromosome
+
+        return population
 
     def sort(self, population):
         """
@@ -171,7 +213,7 @@ class JTNN_FNL(GenerativeModel):
 
         population = self.optimizer.optimize(population)
         population = self.crossover(population=population)
-        #populaiton = self.mutate(population)
+        populaiton = self.mutate(population)
 
         print("sort")
         population = self.sort(population)
@@ -290,7 +332,6 @@ class JTNN(GenerativeModel):
 
         chromosome = list(population['chromosome'].loc[population['smiles'].isna()])
 
-        print(type(chromosome))
         smiles = self.decode(chromosome)
         for s, l in zip(smiles, chromosome):
             population['smiles'].loc[population['chromosome'] == l] = s

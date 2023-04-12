@@ -1,4 +1,0 @@
-fsitgl-hpc020p
-/mnt/projects/ATOM/blackst/GMD/NaturalProducts/Train
-/var/spool/slurmd/job21342280/slurm_script: line 27: unexpected EOF while looking for matching `"'
-/var/spool/slurmd/job21342280/slurm_script: line 30: syntax error: unexpected end of file
