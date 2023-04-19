@@ -6,16 +6,17 @@ import yaml
 import time
 from yaml import Loader
 
-import new_optimizer
+import optimizer
 
 from generative_models.FNL_JTNN.fast_jtnn.gen_latent import encode_smiles, decoder
-from generative_models.JTNN.VAEUtils import DistributedEvaluator
 
 Log = logging.getLogger(__name__)
 
 # Hack to keep molvs package from issuing debug message on bad Unicode string
 molvs_log = logging.getLogger('molvs')
 molvs_log.setLevel(logging.WARNING)
+
+
 
 def create_generative_model(params):
     """
@@ -27,15 +28,12 @@ def create_generative_model(params):
     Raises: 
         ValueError: Only params.VAE_type = "JTNN" is supported
     """
-    if params.model_type.lower() == "jtnn":
-        return JTNN(params)
-    elif params.model_type.lower() == "moses_charvae":
-        print("loading moses charvae")
-        return charVAE(params)
-    elif params.model_type.lower() == 'jtnn-fnl':
+
+    if params.model_type.lower() == 'jtnn-fnl':
         return JTNN_FNL(params)
     else:
         raise ValueError("Unknown model_type %s" % params.model_type)
+
 
 
 class GenerativeModel(object):
@@ -65,7 +63,7 @@ class JTNN_FNL(GenerativeModel):
         self.is_first_epoch = True
 
         #New optimizer structure STB
-        self.optimizer = new_optimizer.create_optimizer(params)
+        self.optimizer = optimizer.create_optimizer(params)
         self.mate_prob = params.mate_prob
         self.max_population = params.max_population
         self.mutate_prob = params.mutate_prob
@@ -81,13 +79,19 @@ class JTNN_FNL(GenerativeModel):
 
     def decode(self, chromosome):
         print("Decoding ", len(chromosome), " molecules")
+
+        t1 = time.time()
         
         # Parallel:
         #smiles = self.decoder.decode_simple_2(chromosome)
 
         # Not parallel:
         smiles = self.decoder.decode_simple(chromosome)
-        
+
+        t2 = time.time()
+
+        print("Decoding took ", t2-t1, " seconds")
+
         return smiles
         
     def crossover(self, population):
@@ -122,13 +126,9 @@ class JTNN_FNL(GenerativeModel):
         # the population. Mutations happen after crossover and can happen to new or old individuals
 
         mut_indices = np.where(np.random.rand(len(population)) < self.mutate_prob)[0]
-        print("Mut indicies: ", mut_indices, "\t length ", len(mut_indices))
 
         for idx in mut_indices:
             chromosome = population['chromosome'].iloc[idx]
-            print("Chromosome: ", chromosome)
-            print("length Chromosome: ", len(chromosome))
-            
 
             tree_vec, mol_vec = np.hsplit(chromosome, 2)
 
@@ -222,7 +222,6 @@ class JTNN_FNL(GenerativeModel):
         smiles = self.decode(population['chromosome'].tolist())
 
         population['smiles'] = smiles
-        print("Shape of population: ", population.shape)
         
         return population
 
@@ -256,92 +255,6 @@ def test_decoder(args):
     print("Number of smiles incorrectly decoded: ", counter, " Reconstruction error: ", 100*(counter / (len(smiles_original))), "%")
 
 
-
-class JTNN(GenerativeModel):
-
-    def __init__(self, params):
-        self.device = params.device
-        self.vae_path = params.vae_path
-        self.vocab_path = params.vocab_path
-
-        self.vae = DistributedEvaluator(
-            #device=self.device,
-            timeout=15, #TODO: is this a parameter likely to be tweaked?
-            vae=self.vae_path,
-            vocab=self.vocab_path,
-        )
-
-        self.optimizer = optimizer2.create_optimizer(params)
-
-    def encode(self, population):
-        smiles = population['smiles'].tolist()
-        chromosome, keep_compounds, dataset = self.vae.encode_smiles(smiles) #TODO: do we need this returned variable: dataset???
-        print("smiles encoded")
-
-        population = population.iloc[keep_compounds]
-        population['chromosome'] = list(chromosome)
-        #TODO: Look into this warning:
-        #/mnt/projects/ATOM/blackst/GenGMD/source/generative_network.py:149: SettingWithCopyWarning: 
-        #A value is trying to be set on a copy of a slice from a DataFrame.
-        #Try using .loc[row_indexer,col_indexer] = value instead
-        
-        return population
-    
-    def encode_test(self, smiles):
-        # TODO: This is a test function to test the idea of only sending the compounds
-        # that have not previously been encoded. This would save time over generations. 
-        # Need to continue to explore how to handle removed compounds.
-
-        chromosome, keep_compounds, dataset = self.vae.encode_smiles(smiles) #TODO: do we need this returned variable: dataset???
-
-        return smiles, chromosome
-        
-    def decode(self, chromosome):
-
-        if len(chromosome) == 0:
-            raise Exception("the chromosome seems emtpy...")
-
-        if type(chromosome) is list:
-            chromosome = [np.asarray(l) for l in chromosome]
-        else:
-            print(type(chromosome))
-
-        smiles, _ = self.vae.decode_smiles(chromosome)
-        
-        return smiles
-
-    def optimize_test(self, population):
-        # TODO: This is a test function to test the idea of only sending the compounds
-        # that have not previously been encoded. This would save time over generations. 
-        # Need to continue to explore how to handle removed compounds.
-
-        smiles_to_encode = population['smiles'].loc[population['chromosome'].isna()]
-
-        chromosome = self.encode_test(smiles_to_encode)
-
-        for s, l in zip(smiles_to_encode, chromosome):
-            population['chromosome'].loc[population['smiles'] == s] = l
-
-        population = self.optimizer.optimize(population)
-    
-    def optimize(self, population):
-        population = self.encode(population)
-
-        population = self.optimizer.optimize(population)
-
-
-        chromosome = list(population['chromosome'].loc[population['smiles'].isna()])
-
-        smiles = self.decode(chromosome)
-        for s, l in zip(smiles, chromosome):
-            population['smiles'].loc[population['chromosome'] == l] = s
-
-        #TODO: Write test functions for 
-
-        return population
-
-
-
 class CHAR_VAE(GenerativeModel):
 
     def __init__(self, params):
@@ -353,20 +266,6 @@ class CHAR_VAE(GenerativeModel):
     def optimize(self):
         pass
 
-
-def test_jtvae(args):
-    population = pd.read_csv("/mnt/projects/ATOM/blackst/FNLGMD/source/evaluated_pop.csv")
-    chromosome = list(population['chromosome'].loc[population['smiles'].isna()])
-
-    print(type(chromosome))
-    print(type(chromosome[0]))
-    #print(type(np.asarray(chromosome)))
-    #print(len(chromosome))
-    #print(len(chromosome[0]))
-
-    vae = create_generative_model(args)
-
-    smiles = vae.decode(chromosome)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -380,14 +279,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     test_decoder(args)
-    #test_jtvae(args)
-
-
-
-
-
-
-
-
-
-

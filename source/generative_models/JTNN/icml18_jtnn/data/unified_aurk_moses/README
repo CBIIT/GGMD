@@ -1,1 +1,0 @@
-vocab was constructed by appending unique elements of aurk vocab to the end of the moses vocab. That is, any aurk element appearing in the moses vocab is dropped.
