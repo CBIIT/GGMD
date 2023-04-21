@@ -26,7 +26,7 @@ Any new method generative model must be implemented as a class in the generative
 ```
 conda create -n <env_name> python=3.8
 conda activate <env_name> 
-conda install -c conda-forge rdkit
+conda install -c conda-forge rdkit=2020.09.5 
 conda install numpy 
 conda install scipy
 conda install joblib

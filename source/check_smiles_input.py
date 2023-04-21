@@ -1,0 +1,1 @@
+from generative_models.FNL_JTNN.fast_jtnn.mol_tree import Vocab, MolTree
