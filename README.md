@@ -47,9 +47,11 @@ There are currently 4 parent folders in this repository that are intended to org
 
 An example configuration can be found at 
 
-`workspace/example_dir`
+`examples/LogP_JTVAE`
 
-In this foldere, there is a slurm file and configuration file that are intended to be used as a 
+In this foldere, there is a slurm file and configuration file that are intended to be used as an example case. Please edit the config file to point to your directory locations for each of the files. All necessary files can be found in the folder at FNLGMD/examples/LogP_JTVAE. To run the test case from the command line, please run the below command from the root folder of this repository:
+
+`python source/main.py -config examples/LogP_JTVAE/config.yaml`
 
 There is no "go to" values for many of the parameters. Each problem requires different settings and there is not quick way to determine the optimal values. Changing the parameters can have significant effects on the selection pressure, convergence, and diversity. It is important that you explore these parameters and learn about the effect each parameter has on the population as a whole. 
 
