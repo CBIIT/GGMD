@@ -46,6 +46,7 @@ class GeneticOptimizer(Optimizer):
         self.mate_prob = params.mate_prob
         self.max_population = params.max_population
         self.optima_type = params.optima_type
+        self.elite_perc = params.elite_perc
 
     def optimize(self, population):
         self.population = pd.concat([population, self.retained_population])
@@ -72,7 +73,7 @@ class GeneticOptimizer(Optimizer):
             raise ValueError(f"Unknown optima type {self.optima_type.lower()}")
 
     def select(self):
-        num_survived = int((1 - self.mate_prob) * self.population_size) #int((1 - 0.3) * 50) = 35
+        num_survived = int(self.mate_prob * self.population_size) #int((1 - 0.3) * 50) = 35
         print("num_survived", num_survived)
         selected_population = pd.DataFrame(columns=['compound_id', 'smiles', 'chromosome', 'fitness'])
 
@@ -115,6 +116,13 @@ def test_selection():
     population = optimizer.optimize(population)
 
     population.to_csv("/mnt/projects/ATOM/blackst/FNLGMD/workspace/development/optimized.csv", index=False)
+
+
+class ParticleSwarmOptimizer(Optimizer):
+    def __init__(self):
+        pass
+    def optimize(self):
+        pass
 
 if __name__ == "__main__":
     test_selection()

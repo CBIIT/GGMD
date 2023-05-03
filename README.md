@@ -32,6 +32,7 @@ conda install scipy
 conda install joblib
 conda install networkx 
 conda install pytorch torchvision cpuonly -c pytorch
+conda install yaml
 
 pip install Pebble
 ```

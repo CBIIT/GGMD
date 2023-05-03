@@ -16,6 +16,7 @@ class Tracker():
             smiles_list = [line.strip("\r\n ").split()[0] for line in f]
         
         smiles_list = sample(smiles_list, self._initial_pop_size)
+        smiles_list = smiles_list[0:5]
         comp_ids = [i for i in range(len(smiles_list))]
 
         population = pd.DataFrame()

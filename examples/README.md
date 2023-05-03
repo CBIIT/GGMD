@@ -13,7 +13,7 @@ There is an extensive list of parameters that are necessary to run this pipeline
 #Selection/Optimization params
 - optimizer_type: Which optimizer class should be used to optimize the molecules. Current implemented options: 'geneticoptimizer'
 - tourn_size: The number of individuals that should be in each tournament if using tournament selection. This value should be a positive integer that is no larger than the size of the population.
-- mate_prob: This parameter has an effect on the number of parents that are selected for crossover. Enter a float value between 0 and 1.
+- mate_prob: This parameter is the percentage of the population to be carried over to the next generation and be mutated and used as parents. Enter a float value between 0 and 1.
 - mutate_prob: The probability of mutation occuring. This parameter determines the probability of an individual being mutated and the probability of each gene being mutated. Enter a float value between 0 and 1.
 - mutation_std: This parameter is used for the mutation operator. This parameter determines the scale of the mutated genes value.
 - optima_type: The optima type determines what fitness values are considered good/bad. Current implemented options: "minima" and "maxima".

@@ -8,12 +8,13 @@ num_epochs: 2
 #Selection/Optimization params
 optimizer_type: 'geneticoptimizer'
 tourn_size: 15
-mate_prob: 0.3
+mate_prob: 0.7
 mutate_prob: 0.1
 mutation_std: 1
 max_clones: 1
 optima_type: "maxima"
 selection_type: "tournament"
+elite_perc: 0
 
 initial_pop_size: 50
 max_population: 50
