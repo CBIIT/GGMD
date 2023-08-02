@@ -6,7 +6,7 @@ import yaml
 import time
 from yaml import Loader
 
-import optimizer
+from optimizers.optimizer_factory import create_optimizer
 
 from generative_models.FNL_JTNN.fast_jtnn.gen_latent import encode_smiles, decoder
 
@@ -63,7 +63,7 @@ class JTNN_FNL(GenerativeModel):
         self.is_first_epoch = True
 
         #New optimizer structure STB
-        self.optimizer = optimizer.create_optimizer(params)
+        self.optimizer = create_optimizer(params)
         self.mate_prob = params.mate_prob
         self.max_population = params.max_population
         self.mutate_prob = params.mutate_prob
@@ -71,13 +71,14 @@ class JTNN_FNL(GenerativeModel):
         self.tree_sd = 4.86
         self.molg_sd = 0.0015
 
-    def encode(self, smiles):
+    def encode(self, smiles) -> list:
         print("Encoding ", len(smiles), " molecules")
+        
         chromosome = self.encoder.encode(smiles)
         
         return list(chromosome)
 
-    def decode(self, chromosome):
+    def decode(self, chromosome) -> list:
         print("Decoding ", len(chromosome), " molecules")
 
         t1 = time.time()
@@ -269,12 +270,14 @@ class CHAR_VAE(GenerativeModel):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-config', help="Config file location *.yml", action='append', required=True)
+    parser.add_argument('-config', help="Config file location *.yml", action='append', default="/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/config.yaml")
     args = parser.parse_args()
 
-    for conf_fname in args.config:
-        with open(conf_fname, 'r') as f:
-            parser.set_defaults(**yaml.load(f, Loader=Loader))
+    #for conf_fname in args.config:
+    #    with open(conf_fname, 'r') as f:
+    #        parser.set_defaults(**yaml.load(f, Loader=Loader))
+    with open("/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/config.yaml", 'r') as f:
+        parser.set_defaults(**yaml.load(f, Loader=Loader))
 
     args = parser.parse_args()
 

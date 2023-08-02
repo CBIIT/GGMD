@@ -21,7 +21,30 @@ Any new method generative model must be implemented as a class in the generative
 
 `git clone https://github.com/SeanTBlack/FNLGMD.git`
 
-### Create conda environment
+There are two methods to execute this GMD pipeline: direct install or using a container. It is highly recommended to utilize the container rather than direct install to minimize errors. This pipeline requires many dependencies that are very particular. The container simplifies the install process and increases reproducibility in results. 
+
+### Container execution: Singularity
+
+This container is implemented using singularity. Singularity is a container management software similar to Docker. Due to certain features of Docker, it is often banned on most HPC systems. Singularity was built to serve as a replacement for Docker on HPC systems while still accepting Docker containers. Due to the high computational requirements for running GMD, we expect that most users will be using HPC systems or cloud computing systems. We are still exploring the integration of this pipeline into cloud computing systems, but most HPC systems will have singularity installed. Contact your system administrators for assistance.
+
+The container has been provided as part of this package and below are steps to run GMD through the container.
+
+```
+Set up a working directory <dir> 
+Copy contents of FNLGMD/workspace/LogP_demo into <dir>
+Edit the output_directory parameter in the config.yaml file that is now in <dir> to be 
+    output_directory: '<dir>'
+$ singularity exec --bind /<dir>:/data /path/to/FNLGMD/gmd_img.sif /run_gmd.sh
+```
+
+If you receive the following error, your system administrators may have limited singularities access to write in your working directory `<dir>`. Try setting up your working directory in a different directory location such as your home directory.
+
+```
+OSError: Cannot save file into a non-existent directory: '<dir>'
+```
+
+
+### Direct install: Create conda environment
 
 ```
 conda create -n <env_name> python=3.8
@@ -33,6 +56,7 @@ conda install joblib
 conda install networkx 
 conda install pytorch torchvision cpuonly -c pytorch
 conda install yaml
+conda install pandas
 
 pip install Pebble
 ```
@@ -50,7 +74,7 @@ An example configuration can be found at
 
 `examples/LogP_JTVAE`
 
-In this foldere, there is a slurm file and configuration file that are intended to be used as an example case. Please edit the config file to point to your directory locations for each of the files. All necessary files can be found in the folder at FNLGMD/examples/LogP_JTVAE. To run the test case from the command line, please run the below command from the root folder of this repository:
+In this folder, there is a slurm file and configuration file that are intended to be used as an example case. Please edit the config file to point to your directory locations for each of the files. All necessary files can be found in the folder at FNLGMD/examples/LogP_JTVAE. To run the test case from the command line, please run the below command from the root folder of this repository:
 
 `python source/main.py -config examples/LogP_JTVAE/config.yaml`
 
