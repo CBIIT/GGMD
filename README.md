@@ -27,14 +27,18 @@ There are two methods to execute this GMD pipeline: direct install or using a co
 
 This container is implemented using singularity. Singularity is a container management software similar to Docker. Due to certain features of Docker, it is often banned on most HPC systems. Singularity was built to serve as a replacement for Docker on HPC systems while still accepting Docker containers. Due to the high computational requirements for running GMD, we expect that most users will be using HPC systems or cloud computing systems. We are still exploring the integration of this pipeline into cloud computing systems, but most HPC systems will have singularity installed. Contact your system administrators for assistance.
 
-The container has been provided as part of this package and below are steps to run GMD through the container.
+To install the singularity image, run the below command:
+
+`singularity pull library://seantblack/gmd/gmd_0_9.sif`
+
+Below are steps to run GMD through the container.
 
 ```
 Set up a working directory <dir> 
 Copy contents of FNLGMD/workspace/LogP_demo into <dir>
 Edit the output_directory parameter in the config.yaml file that is now in <dir> to be 
-    output_directory: '<dir>'
-$ singularity exec --bind /<dir>:/data /path/to/FNLGMD/gmd_img.sif /run_gmd.sh
+    output_directory: '<dir>/'
+$ singularity exec --bind /<dir>:/data /path/to/gmd_img.sif /run_gmd.sh
 ```
 
 If you receive the following error, your system administrators may have limited singularities access to write in your working directory `<dir>`. Try setting up your working directory in a different directory location such as your home directory.
@@ -90,5 +94,5 @@ Feedback is always greatly appreciated! This code is still in development, chang
 
 ## Development:
 
-If you want to make changes to the code base, please create a new branch from the master branch then create a merge request. Changes can include, but are not limited to implementing new generative models, scoring functions, optimization methods, etc...
+If you want to suggest changes to the code base, please create a new branch from the master branch then create a merge request. Changes can include, but are not limited to implementing new generative models, scoring functions, optimization methods, etc...
 

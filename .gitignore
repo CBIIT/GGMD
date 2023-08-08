@@ -1,0 +1,8 @@
+workspace/development/
+.ipynb_checkpoints/
+__pycache__/
+
+*.csv
+*.out
+
+!examples/LogP_JTVAE/example.out
