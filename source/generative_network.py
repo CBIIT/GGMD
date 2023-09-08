@@ -9,6 +9,8 @@ from yaml import Loader
 from optimizers.optimizer_factory import create_optimizer
 
 from generative_models.FNL_JTNN.fast_jtnn.gen_latent import encode_smiles, decoder
+from generative_models.AutoGrow.mutation.execute_mutations import Mutator
+from generative_models.AutoGrow.crossover.execute_crossover import CrossoverOp
 
 Log = logging.getLogger(__name__)
 
@@ -31,6 +33,8 @@ def create_generative_model(params):
 
     if params.model_type.lower() == 'jtnn-fnl':
         return JTNN_FNL(params)
+    elif params.model_type.lower() == 'autogrow':
+        return AutoGrow(params)
     else:
         raise ValueError("Unknown model_type %s" % params.model_type)
 
@@ -74,8 +78,13 @@ class JTNN_FNL(GenerativeModel):
     def encode(self, smiles) -> list:
         print("Encoding ", len(smiles), " molecules")
         
+        t1 = time.time()
+
         chromosome = self.encoder.encode(smiles)
         
+        t2 = time.time()
+        print("Encoding took ", t2-t1, " seconds")
+
         return list(chromosome)
 
     def decode(self, chromosome) -> list:
@@ -84,10 +93,10 @@ class JTNN_FNL(GenerativeModel):
         t1 = time.time()
         
         # Parallel:
-        #smiles = self.decoder.decode_simple_2(chromosome)
+        smiles = self.decoder.decode_simple_2(chromosome)
 
         # Not parallel:
-        smiles = self.decoder.decode_simple(chromosome)
+        #smiles = self.decoder.decode_simple(chromosome)
 
         t2 = time.time()
 
@@ -256,6 +265,97 @@ def test_decoder(args):
     print("Number of smiles incorrectly decoded: ", counter, " Reconstruction error: ", 100*(counter / (len(smiles_original))), "%")
 
 
+
+class AutoGrow(GenerativeModel):
+    def __init__(self, params):
+        self.num_crossovers = params.num_crossovers
+        self.num_mutations = params.num_mutations
+        self.num_elite = params.num_elite
+
+        self.optimizer = create_optimizer(params)
+        self.mutator = Mutator(params)
+        self.CrossoverOp = CrossoverOp(params)
+
+    def mutate(self, smiles_list, new_smiles_list):
+        
+        new_smiles_list = self.mutator.make_mutants(generation_num=1, num_mutants_to_make=self.num_mutations, ligands_list=smiles_list, new_mutation_smiles_list=new_smiles_list)
+        return new_smiles_list
+    
+    def crossover(self, population):
+        
+        print("enter crossover function")
+        new_smiles_list = self.CrossoverOp.make_crossovers(generation_num=1, num_crossovers_to_make=self.num_crossovers, list_previous_gen_smiles=population['smiles'].tolist(), new_crossover_smiles_list=[])
+        print("done crossover: ", len(new_smiles_list), " new smiles")
+        return new_smiles_list
+    
+    def optimize(self, population):
+        print(f"starting population size: {population.shape}")
+        print(population.head())
+
+        #generate mutation_pop
+        new_smiles_list = []
+        mut_pop_full = False
+        while mut_pop_full == False:
+
+            mutation_pop = self.optimizer.select_non_elite(population, self.num_mutations)
+            #print(f"Mutation population: size {mutation_pop.shape}")
+            
+            #mutate mutation_pop
+            new_smiles_list.extend(self.mutate(mutation_pop['smiles'].tolist(), new_smiles_list))
+            
+            #filter mutation_pop 
+
+            if len(mutation_pop) == self.num_mutations:
+                mut_pop_full = True
+
+        #generate crossover_pop
+        cross_pop_full = False
+        while cross_pop_full == False:
+
+            crossover_pop = self.optimizer.select_non_elite(population, self.num_crossovers)
+            #print(f"Crossover population: size {crossover_pop.shape}")
+            #print(crossover_pop.head())
+
+            #crossover crossover_pop
+            new_smiles_list.append(self.crossover(crossover_pop))
+            #filter crossover_pop
+
+            if len(crossover_pop) == self.num_crossovers:
+                cross_pop_full = True
+
+        #generate elite_pop
+        elite_pop_full = False
+        while elite_pop_full == False:
+
+            elite_pop = self.optimizer.select_non_elite(population, self.num_elite)
+            print(f"Elite population: size {elite_pop.shape}")
+            print(elite_pop.head())
+
+            #filter elite_pop
+
+            if len(elite_pop) == self.num_elite:
+                elite_pop_full = True
+        
+        #combine mutation_pop, crossover_pop, elite_pop
+        combined_population = pd.concat([mutation_pop, crossover_pop, elite_pop])
+        print("combined shape: ", combined_population.shape)
+        print(combined_population.head())
+
+        #Return combined_population
+        return combined_population
+
+
+
+def test_autogrow(args):
+    model = create_generative_model(args)
+
+    with open(args.smiles_input_file) as f:
+        smiles_list = [line.strip("\r\n ").split()[0] for line in f]
+
+    smiles = smiles_list[:50]
+
+    model.optimize(smiles)
+
 class CHAR_VAE(GenerativeModel):
 
     def __init__(self, params):
@@ -276,9 +376,12 @@ if __name__ == "__main__":
     #for conf_fname in args.config:
     #    with open(conf_fname, 'r') as f:
     #        parser.set_defaults(**yaml.load(f, Loader=Loader))
-    with open("/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/config.yaml", 'r') as f:
+    with open("/mnt/projects/ATOM/blackst/FNLGMD/source/config.yaml", 'r') as f:
         parser.set_defaults(**yaml.load(f, Loader=Loader))
 
     args = parser.parse_args()
 
-    test_decoder(args)
+    if args.model_type == 'jtnn-fnl':
+        test_decoder(args)
+    elif args.model_type == 'autogrow':
+        test_autogrow(args)

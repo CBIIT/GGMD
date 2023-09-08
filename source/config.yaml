@@ -1,0 +1,38 @@
+model_type: 'jtnn-fnl'
+
+smiles_input_file: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/all.txt'
+output_directory: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/'
+scorer_type: 'FNL'
+num_epochs: 2
+
+#Selection/Optimization params
+optimizer_type: 'geneticoptimizer'
+tourn_size: 15
+mate_prob: 0.7
+mutate_prob: 0.1
+mutation_std: 1
+max_clones: 1
+optima_type: "maxima"
+selection_type: "tournament"
+elite_perc: 0
+
+initial_pop_size: 50
+max_population: 50
+
+#FNL JTNN
+vocab_path: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/all_vocab.txt'
+model_path: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/model.epoch-35'
+
+#autogrow
+num_crossovers: 20
+num_mutations: 20
+num_elite: 10
+number_of_processors: 1
+rxn_library: "all_rxns"
+rxn_library_file: ""
+function_group_library: ""
+complementary_mol_dir: ""
+max_time_mcs_prescreen: 1
+max_time_mcs_thorough: 1
+min_atom_match_mcs: 4
+protanate_step: False

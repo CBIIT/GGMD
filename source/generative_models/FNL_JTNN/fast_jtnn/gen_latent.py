@@ -17,7 +17,7 @@ class encode_smiles():
         self.n_cpus = 36 #default
         self.bat_size = 200 #default
         self.verbose = False #default
-        self.vocab_path = params.vocab_path
+        self.vocab = Vocab([x.strip("\r\n ") for x in open(params.vocab_path)])
         self.model_path = params.model_path
         self.counter = 0
         #self.lat_out #Remove: we are returning rather than saving to file
@@ -61,12 +61,12 @@ class encode_smiles():
             smiles_rdkit.append(smi)
 
         n_data = len(smiles_rdkit)
-        vocab = [x.strip("\r\n ") for x in open(self.vocab_path)] 
-        vocab = Vocab(vocab)
+        #vocab = [x.strip("\r\n ") for x in open(self.vocab_path)] 
+        #vocab = Vocab(vocab)
 
         #JI - Load Fast-JTVAE Model/Autoencoder
 
-        self.model = JTNNVAE(vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
+        self.model = JTNNVAE(self.vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
         self.model.load_state_dict(torch.load(self.model_path, map_location='cpu'))
         self.model = self.model.cpu()
 
@@ -79,10 +79,11 @@ class encode_smiles():
         #JI - Encode SMILES in parallel
         """
         #all_vec = Parallel(n_jobs=self.n_cpus,batch_size='auto',max_nbytes=None,mmap_mode=None,verbose=n_verb)\
+        """
         all_vec = Parallel(n_jobs=8,batch_size='auto',max_nbytes=None,mmap_mode=None,verbose=n_verb)\
                 (delayed(self.wrap_encode)(batch) for batch in batches)
-        """
-        all_vec = self.wrap_encode(smiles_rdkit)
+        
+        #all_vec = self.wrap_encode(smiles_rdkit) #Non-Parellel STB
         print ('Encoding computation time, Total time = %.0f, %0.f seconds' % \
             ((time.time() - curr_time), (time.time() - start_time)))
         #curr_time = time.time()
@@ -118,12 +119,12 @@ def test_encoder():
 class decoder():
     def __init__(self, args):
         self.model_path = args.model_path
-        self.vocab = args.vocab_path
+        self.vocab = Vocab([x.strip("\r\n ") for x in open(args.vocab_path)])
         self.hidden_size = 450 #default
         self.latent_size = 128 #default
         self.depthT = 20 #default
         self.depthG = 3 #default
-        self.n_cpus = 1 #default 36
+        self.n_cpus = 8 #default 36
         self.verbose = False #default
 
         if self.verbose == True:
@@ -150,10 +151,10 @@ class decoder():
 
     def decode(self, latent):
 
-        vocab = [x.strip("\r\n ") for x in open(self.vocab)] #TODO: When combining these two classes, can combine vocab
-        vocab = Vocab(vocab)
+        #vocab = [x.strip("\r\n ") for x in open(self.vocab)] #TODO: When combining these two classes, can combine vocab
+        #vocab = Vocab(vocab)
 
-        model = JTNNVAE(vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
+        model = JTNNVAE(self.vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
         model.load_state_dict(torch.load(self.model_path, map_location='cpu'))
         self.model = model.cpu()
 
@@ -177,24 +178,24 @@ class decoder():
 
     def decode_simple_2(self, latent_list):
         warnings.filterwarnings("ignore")
-        vocab = [x.strip("\r\n ") for x in open(self.vocab)] #TODO: When combining these two classes, can combine vocab
-        vocab = Vocab(vocab)
+        #vocab = [x.strip("\r\n ") for x in open(self.vocab)] #TODO: When combining these two classes, can combine vocab
+        #vocab = Vocab(vocab)
 
-        model = JTNNVAE(vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
+        model = JTNNVAE(self.vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
         model.load_state_dict(torch.load(self.model_path, map_location='cpu'))
         self.model = model.cpu()
 
-        smi_recon = Parallel(n_jobs=self.n_cpus,batch_size=1,max_nbytes=50000,mmap_mode=None,verbose=self.n_verb)\
+        smi_recon = Parallel(n_jobs=self.n_cpus,batch_size=5,max_nbytes=50000,mmap_mode=None,verbose=self.n_verb)\
             (delayed(self.wrap_decode_simple)(latent_list[i]) for i in range(len(latent_list)))
         
         return smi_recon
 
     def decode_simple(self, latent):
 
-        vocab = [x.strip("\r\n ") for x in open(self.vocab)] #TODO: When combining these two classes, can combine vocab
-        vocab = Vocab(vocab)
+        #vocab = [x.strip("\r\n ") for x in open(self.vocab)] #TODO: When combining these two classes, can combine vocab
+        #vocab = Vocab(vocab)
 
-        model = JTNNVAE(vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
+        model = JTNNVAE(self.vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
         model.load_state_dict(torch.load(self.model_path, map_location='cpu'))
         model = model.cpu()
 

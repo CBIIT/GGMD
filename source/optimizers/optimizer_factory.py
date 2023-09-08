@@ -4,6 +4,7 @@ from yaml import Loader
 
 from optimizers.genetic_optimizer import GeneticOptimizer
 from optimizers.particle_swarm import ParticleSwarmOptimizer
+from optimizers.autogrow_optimizer import AutoGrowOptimizer
 
 def create_optimizer(params):
     """
@@ -17,6 +18,8 @@ def create_optimizer(params):
     """
     if params.optimizer_type.lower() == "geneticoptimizer":
         return GeneticOptimizer(params)
+    elif params.optimizer_type.lower() == "autogrowoptimizer":
+        return AutoGrowOptimizer(params)
     elif params.optimizer_type.lower() == "particleswarmoptimizer":
         return ParticleSwarmOptimizer(params)
     else:

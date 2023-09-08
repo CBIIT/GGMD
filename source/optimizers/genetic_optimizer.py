@@ -8,14 +8,14 @@ class GeneticOptimizer(Optimizer):
         self.tourn_size = params.tourn_size
         self.mate_prob = params.mate_prob
         self.max_population = params.max_population
-        self.optima_type = params.optima_type
+        self.optima_type = params.optima_type.lower()
         self.elite_perc = params.elite_perc
 
     def optimize(self, population):
         self.population = pd.concat([population, self.retained_population])
         self.population.reset_index(drop=True, inplace=True)
         self.population_size = len(self.population)
-        self.chromosome_length = len(self.population["chromosome"].iloc[0]) #STB: aligning with GA language in generalizing code
+        #self.chromosome_length = len(self.population["chromosome"].iloc[0]) #STB: aligning with GA language in generalizing code
 
         print(f"Combined population size: {self.population_size}, new population size: {len(population)}, retained_df size: {len(self.retained_population)}, target population size: {self.max_population}")
         
@@ -28,12 +28,12 @@ class GeneticOptimizer(Optimizer):
     def tournament_selection(self, selection_pool):
         selection_pool[["fitness", "compound_id"]] = selection_pool[["fitness", "compound_id"]].apply(pd.to_numeric)
         
-        if self.optima_type.lower() == "minima":
+        if self.optima_type == "minima":
             return selection_pool.fitness.idxmin()
-        elif self.optima_type.lower() == "maxima":
+        elif self.optima_type == "maxima":
             return selection_pool.fitness.idxmax()
         else:
-            raise ValueError(f"Unknown optima type {self.optima_type.lower()}")
+            raise ValueError(f"Unknown optima type {self.optima_type}")
 
     def select(self):
         num_survived = int(self.mate_prob * self.population_size) #int((1 - 0.3) * 50) = 35
