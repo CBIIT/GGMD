@@ -168,27 +168,6 @@ class JTNN_FNL(GenerativeModel):
 
         return population
 
-    def sort(self, population):
-        """
-        This function splits the population into two sets: one set that contains the new individuals and one set that contains the unchanged individuals
-        The new individuals need to be decoded, scored and added to the data tracker. The unchanged individuals have already been decoded, scored and tracked.
-        This function sends the unchanged individuals to the genetic optimizer which stores the individuals until the next generation and returns the new
-        individuals to be decoded, scored, and tracked
-        Paramters:
-            - population: dataframe of whole population
-        Returns:
-            - population_of_new_individuals: Pandas DataFrame of the individuals created in this generation
-        """
-
-        #Surviving individuals have real values for the fitness, smiles, and compound_id columns
-        retained_population = population[population['fitness'].isna() == False]
-        retained_population.drop(['parent1_id', 'parent2_id'], axis=1, inplace=True)
-        self.optimizer.set_retained_population(retained_population)
-
-        #Individuals that have been created this generation have a NaN associated with fitness, smiles, and compound_id columns
-        population_of_new_individuals = population[population['compound_id'].isna()]
-        return population_of_new_individuals
-
     def optimize(self, population):
         """
         This is the function responsible for handling all tasks related to optimization. For JTVAE, this includes encoding, 
@@ -220,13 +199,10 @@ class JTNN_FNL(GenerativeModel):
 
         #Optimize:
         print("Optimizing")
-
-        population = self.optimizer.optimize(population)
+        size = int(self.mate_prob * len(population)) #int((1 - 0.3) * 50) = 35
+        population = self.optimizer.select_non_elite(population, size)
         population = self.crossover(population=population)
-        populaiton = self.mutate(population)
-
-        print("sort")
-        population = self.sort(population)
+        population = self.mutate(population)
 
         #Decode:
         smiles = self.decode(population['chromosome'].tolist())
@@ -271,77 +247,72 @@ class AutoGrow(GenerativeModel):
         self.num_crossovers = params.num_crossovers
         self.num_mutations = params.num_mutations
         self.num_elite = params.num_elite
-
+        
+        self.generation_number = 0
         self.optimizer = create_optimizer(params)
         self.mutator = Mutator(params)
         self.CrossoverOp = CrossoverOp(params)
 
-    def mutate(self, smiles_list, new_smiles_list):
-        
-        new_smiles_list = self.mutator.make_mutants(generation_num=1, num_mutants_to_make=self.num_mutations, ligands_list=smiles_list, new_mutation_smiles_list=new_smiles_list)
-        return new_smiles_list
+    def mutate(self):
+        print("Begin Mutation")
+        mutated_smiles_df = pd.DataFrame({"smiles": [], "parent1_id": [], "reaction_id": [], "zinc_id": []})
     
-    def crossover(self, population):
-        
-        print("enter crossover function")
-        new_smiles_list = self.CrossoverOp.make_crossovers(generation_num=1, num_crossovers_to_make=self.num_crossovers, list_previous_gen_smiles=population['smiles'].tolist(), new_crossover_smiles_list=[])
-        print("done crossover: ", len(new_smiles_list), " new smiles")
-        return new_smiles_list
+        while len(mutated_smiles_df) < self.num_mutations:
+            
+            num_mutations_needed = self.num_mutations - len(mutated_smiles_df) 
+            num_mutations_needed += np.ceil(0.05 * num_mutations_needed)
+
+            parent_population = self.optimizer.select_non_elite(self.previous_generation, num_mutations_needed)
+
+            mutated_smiles_df = self.mutator.make_mutants(generation_num=self.generation_number, num_mutants_to_make=self.num_mutations, parent_population=parent_population, new_generation_df=mutated_smiles_df)
+        print("End mutation")
+        return mutated_smiles_df
     
+    def crossover(self):
+        print("begin crossover")
+        crossed_smiles_df = pd.DataFrame({"smiles": [], "parent1_id": [], "parent2_id": []})
+
+        while len(crossed_smiles_df) < self.num_crossovers:
+            
+            num_crossovers_needed = self.num_crossovers - len(crossed_smiles_df) 
+            num_crossovers_needed += np.ceil(0.5 * num_crossovers_needed)
+
+            parent_population = self.optimizer.select_non_elite(self.previous_generation, num_crossovers_needed)
+
+            crossed_smiles_df = self.CrossoverOp.make_crossovers(generation_num=self.generation_number, num_crossovers_to_make=self.num_crossovers, list_previous_gen_smiles=parent_population, new_crossover_smiles_list=crossed_smiles_df)
+        print("end crossover")
+        return crossed_smiles_df
+
     def optimize(self, population):
-        print(f"starting population size: {population.shape}")
-        print(population.head())
 
+        self.generation_number += 1
+        self.previous_generation = population
+        print("\n\nSize of self.previous_generation before mutation: ", len(self.previous_generation))
         #generate mutation_pop
-        new_smiles_list = []
-        mut_pop_full = False
-        while mut_pop_full == False:
-
-            mutation_pop = self.optimizer.select_non_elite(population, self.num_mutations)
-            #print(f"Mutation population: size {mutation_pop.shape}")
-            
-            #mutate mutation_pop
-            new_smiles_list.extend(self.mutate(mutation_pop['smiles'].tolist(), new_smiles_list))
-            
-            #filter mutation_pop 
-
-            if len(mutation_pop) == self.num_mutations:
-                mut_pop_full = True
-
+        mutated_df = self.mutate()
+        source = ['mutation' for _ in range(len(mutated_df))]
+        mutated_df['source'] = source
+        mutated_df['generation'] = [[] for _ in range(len(mutated_df))]
+        print("Size of self.previous_generation after mutation: ", len(self.previous_generation))
         #generate crossover_pop
-        cross_pop_full = False
-        while cross_pop_full == False:
-
-            crossover_pop = self.optimizer.select_non_elite(population, self.num_crossovers)
-            #print(f"Crossover population: size {crossover_pop.shape}")
-            #print(crossover_pop.head())
-
-            #crossover crossover_pop
-            new_smiles_list.append(self.crossover(crossover_pop))
-            #filter crossover_pop
-
-            if len(crossover_pop) == self.num_crossovers:
-                cross_pop_full = True
-
+        crossed_df = self.crossover()
+        source = ['crossover' for _ in range(len(crossed_df))]
+        crossed_df['source'] = source
+        crossed_df['generation'] = [[] for _ in range(len(crossed_df))]
+        
         #generate elite_pop
-        elite_pop_full = False
-        while elite_pop_full == False:
-
-            elite_pop = self.optimizer.select_non_elite(population, self.num_elite)
-            print(f"Elite population: size {elite_pop.shape}")
-            print(elite_pop.head())
-
-            #filter elite_pop
-
-            if len(elite_pop) == self.num_elite:
-                elite_pop_full = True
+        elite_df = self.optimizer.select_elite_pop(population, self.num_elite)
+        print("\n\nelite df")
+        #print(elite_df)
+        print(f"Elite population: size {elite_df.shape}")
+        print("\n")
         
         #combine mutation_pop, crossover_pop, elite_pop
-        combined_population = pd.concat([mutation_pop, crossover_pop, elite_pop])
-        print("combined shape: ", combined_population.shape)
-        print(combined_population.head())
-
-        #Return combined_population
+        combined_population = pd.concat([mutated_df, crossed_df, elite_df])
+        combined_population.reset_index(drop=True, inplace=True)
+        #print("combined shape: ", combined_population.shape)
+        #print(combined_population)
+        
         return combined_population
 
 

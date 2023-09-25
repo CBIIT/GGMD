@@ -12,18 +12,18 @@ def main():
     # required and which aren't. Then we can provide default values for some variables.
     parser = argparse.ArgumentParser()
     parser.add_argument('-config', help="Config file location *.yml", action='append', required=True)
-    args = parser.parse_args()
+    params = parser.parse_args()
 
-    for conf_fname in args.config:
+    for conf_fname in params.config:
         with open(conf_fname, 'r') as f:
             parser.set_defaults(**yaml.load(f, Loader=Loader))
 
-    args = parser.parse_args()
+    params = parser.parse_args()
 
     #initialize classes:
-    evaluator = create_scorer(args)
-    generative_model = create_generative_model(args) 
-    tracker = Tracker(args)
+    evaluator = create_scorer(params)
+    generative_model = create_generative_model(params) 
+    tracker = Tracker(params)
     print("classes initialized")
 
     #initialize population
@@ -36,7 +36,7 @@ def main():
     print("Population evaluated")
 
     #Begin optimizing
-    for epoch in range(args.num_epochs):
+    for epoch in range(params.num_epochs):
         print(f"epoch #{epoch}")
 
         population = generative_model.optimize(population)

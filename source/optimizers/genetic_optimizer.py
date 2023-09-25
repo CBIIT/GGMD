@@ -1,29 +1,18 @@
+import copy
 import pandas as pd
 from optimizers.base_optimizer import Optimizer
 
 class GeneticOptimizer(Optimizer):
     def __init__(self, params):
-        self.retained_population = pd.DataFrame()
-        self.selection_type = params.selection_type.lower()
         self.tourn_size = params.tourn_size
-        self.mate_prob = params.mate_prob
-        self.max_population = params.max_population
+
+        self.selection_type = params.selection_type.lower()
+        if self.selection_type not in ['tournament', 'roulette']:
+            raise ValueError(f"Unknown optima type {self.selection_type}. Available options are: {['tournament', 'roulette']}")
+
         self.optima_type = params.optima_type.lower()
-        self.elite_perc = params.elite_perc
-
-    def optimize(self, population):
-        self.population = pd.concat([population, self.retained_population])
-        self.population.reset_index(drop=True, inplace=True)
-        self.population_size = len(self.population)
-        #self.chromosome_length = len(self.population["chromosome"].iloc[0]) #STB: aligning with GA language in generalizing code
-
-        print(f"Combined population size: {self.population_size}, new population size: {len(population)}, retained_df size: {len(self.retained_population)}, target population size: {self.max_population}")
-        
-        self.select()
-        return self.population
-
-    def set_retained_population(self, unchanged_individuals):
-        self.retained_population = unchanged_individuals
+        if self.optima_type not in ['minima', 'maxima']:
+            raise ValueError(f"Unknown optima type {self.optima_type}. Available options are: {['minima', 'maxima']}")
 
     def tournament_selection(self, selection_pool):
         selection_pool[["fitness", "compound_id"]] = selection_pool[["fitness", "compound_id"]].apply(pd.to_numeric)
@@ -32,15 +21,13 @@ class GeneticOptimizer(Optimizer):
             return selection_pool.fitness.idxmin()
         elif self.optima_type == "maxima":
             return selection_pool.fitness.idxmax()
-        else:
-            raise ValueError(f"Unknown optima type {self.optima_type}")
 
-    def select(self):
-        num_survived = int(self.mate_prob * self.population_size) #int((1 - 0.3) * 50) = 35
-        print("num_survived", num_survived)
-        selected_population = pd.DataFrame(columns=['compound_id', 'smiles', 'chromosome', 'fitness'])
+    def select_non_elite(self, population, size):
+        self.population = copy.deepcopy(population)
+        selected_population = pd.DataFrame(columns=['compound_id', 'smiles', 'generation', 'chromosome', 'fitness'])
 
-        while len(selected_population) < num_survived:
+        #while len(selected_population) < num_survived:
+        while len(selected_population) < size:
             #Setup the pool of individuals for the tournament selection to be a random sampling of the population
             #Without replacement means that the same individual will not appear in the sampling more than once
             if self.tourn_size > len(self.population):
@@ -48,7 +35,10 @@ class GeneticOptimizer(Optimizer):
             else:
                 selection_pool = self.population.sample(self.tourn_size, replace=False) #TODO: Can create an alternative WITH replacement
             
-            selected_individual = self.tournament_selection(selection_pool)
+            if self.selection_type == "tournament":
+                selected_individual = self.tournament_selection(selection_pool)
+            elif self.selection_type == "roulette":
+                selected_individual = self.roulette_selection(selection_pool)
 
             #Now we can add the selected individual to the selected_population and remove it from the self.population
             # so that we do not have repeated individuals in our selected population. This can lead to false convergence
@@ -60,3 +50,16 @@ class GeneticOptimizer(Optimizer):
         #Reset the self.population to contain the selected individuals that will be used for creation of next generation
         self.population = selected_population.reset_index(drop=True)
         print("Population_size after selection ", len(self.population))
+
+        return selected_population
+    
+    def select_elite_pop(self, population, size):
+        if self.optima_type == "minima":
+            sort_order = True
+        elif self.optima_type == "maxima":
+            sort_order = False
+
+        selected_population = population.sort_values(by=['fitness'], ascending = sort_order)
+        selected_population = selected_population.head(size)
+
+        return selected_population

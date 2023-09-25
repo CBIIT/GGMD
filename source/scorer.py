@@ -4,15 +4,15 @@ import networkx as nx
 import numpy as np
 
 
-def create_scorer(args):
-    if args.scorer_type == 'FNL':
-        return FNL_Scorer(args)
+def create_scorer(params):
+    if params.scorer_type == 'LogPTestCase':
+        return LogPOctanolWaterPartitionCoef(params)
     else:
-        raise ValueError("Unknown scorer_type: %s" % args.scorer_type)
+        raise ValueError("Unknown scorer_type: %s" % params.scorer_type)
 
 class Scorer():
-    def __init__(self, args):
-        self.params = args
+    def __init__(self, params):
+        self.params = params
     
     def score(self):
         """
@@ -20,8 +20,9 @@ class Scorer():
         """
         raise NotImplementedError
     
-class FNL_Scorer(Scorer):
-    def __init__(self, args):
+class LogPOctanolWaterPartitionCoef(Scorer):
+    
+    def __init__(self, params):
         pass
     def score(self, population):
 

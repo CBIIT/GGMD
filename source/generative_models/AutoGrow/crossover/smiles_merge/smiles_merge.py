@@ -72,9 +72,6 @@ def run_main_smiles_merge(protanate_step, max_time_mcs_thorough, min_atom_match_
         from lig_1 and lig_2. Returns None if it failed at any point.
     """
 
-    # lig_string_1 = "[N-] = [N+] = NCC(O)COc1cccc2ccccc12"
-    # lig_string_2 = "C# CCOc1ccc2ccccc2c1CO"
-    # lig_string_1 = "C1 = CC = CC = C1"
     # Sanitize
     lig_smile_1 = Chem.MolFromSmiles(lig_string_1, sanitize=False)
     lig_smile_2 = Chem.MolFromSmiles(lig_string_2, sanitize=False)

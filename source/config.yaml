@@ -1,11 +1,13 @@
-model_type: 'jtnn-fnl'
+model_type: 'autogrow'
+#model_type: 'jtnn-fnl'
 
 smiles_input_file: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/all.txt'
 output_directory: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/'
-scorer_type: 'FNL'
-num_epochs: 2
+scorer_type: 'LogPTestCase'
+num_epochs: 1
 
 #Selection/Optimization params
+#optimizer_type: 'autogrowoptimizer'
 optimizer_type: 'geneticoptimizer'
 tourn_size: 15
 mate_prob: 0.7
