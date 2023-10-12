@@ -2,10 +2,6 @@ import argparse, yaml
 import pandas as pd
 from yaml import Loader
 
-from optimizers.genetic_optimizer import GeneticOptimizer
-from optimizers.particle_swarm import ParticleSwarmOptimizer
-from optimizers.autogrow_optimizer import AutoGrowOptimizer
-
 def create_optimizer(params):
     """
     Factory function for creating optimizer objects of the correct subclass for params.optimizer_type.
@@ -17,10 +13,10 @@ def create_optimizer(params):
         ValueError: Only params.optimizer_type = "GeneticOptimizer"  is supported
     """
     if params.optimizer_type.lower() == "geneticoptimizer":
+        from optimizers.genetic_optimizer import GeneticOptimizer
         return GeneticOptimizer(params)
-    elif params.optimizer_type.lower() == "autogrowoptimizer":
-        return AutoGrowOptimizer(params)
     elif params.optimizer_type.lower() == "particleswarmoptimizer":
+        from optimizers.particle_swarm import ParticleSwarmOptimizer
         return ParticleSwarmOptimizer(params)
     else:
         raise ValueError("Unknown optimizer_type %s" % params.optimizer_type)

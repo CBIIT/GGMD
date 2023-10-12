@@ -4,6 +4,8 @@ from yaml import Loader
 from random import sample
 import numpy as np
 
+
+
 class Tracker():
     def __init__(self, params):
         self._next_id = 0
@@ -25,27 +27,24 @@ class Tracker():
         population['compound_id'] = comp_ids
         population['smiles'] = smiles_list
         population['generation'] = [[0] for _ in range(len(smiles_list))]
+        population['source'] = ['initial' for _ in range(len(smiles_list))]
 
         self._next_id = len(comp_ids)
 
-        print(population)
-
         return population
-        
-    def create_tracker(self, population):
-
-        #population['generation'] = [[self.generation] for _ in range(len(population))]
-        
-        #self.master_df = population
-        pass
 
     def update_tracker(self, population):
         population.reset_index(drop=True, inplace=True)
 
         #Set ID numbers for the new individuals
-        #TODO: modify this to not reassign id numbers from surviving individuals from previous generations
-        ids = [i for i in range(self._next_id, self._next_id + len(population))]
-        population['compound_id'] = ids
+        uids = population['compound_id'].tolist()
+        counter = 0
+        for i in range(len(uids)):
+            if not np.isnan(uids[i]):
+                continue
+            uids[i] = self._next_id + counter
+            counter += 1
+        population['compound_id'] = uids
 
         #Update generation values
         self.generation += 1
@@ -69,6 +68,7 @@ class Tracker():
         print(self.master_df)
 
 
+
 def test_tracker():
     # TODO: Define test for tracker
 
@@ -89,6 +89,7 @@ def test_tracker():
 
     tracker.update_tracker(population)
 
-    
+
+
 if __name__ == "__main__":
     test_tracker()

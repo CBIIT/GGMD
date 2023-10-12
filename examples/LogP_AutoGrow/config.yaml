@@ -1,8 +1,7 @@
-#model_type: 'autogrow'
-model_type: 'jtnn-fnl'
+model_type: 'autogrow'
 
-smiles_input_file: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/all.txt'
-output_directory: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/'
+smiles_input_file: './examples/LogP_AutoGrow/all.txt'
+output_directory: './examples/LogP_AutoGrow/'
 scorer_type: 'LogPTestCase'
 num_epochs: 1
 
@@ -20,11 +19,7 @@ elite_perc: 0
 initial_pop_size: 50
 max_population: 50
 
-#FNL JTNN
-vocab_path: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/all_vocab.txt'
-model_path: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/model.epoch-35'
-
-#autogrow
+#autogrow specific
 num_crossovers: 20
 num_mutations: 20
 num_elite: 10

@@ -17,24 +17,28 @@ Any new method generative model must be implemented as a class in the generative
 
 ## Installation
 
+There are two methods to execute this GMD pipeline: direct install or using a container. It is highly recommended to utilize the container rather than direct install to minimize errors. This pipeline requires several python packages that each have particular dependencies. The containers simplify the install process and increases reproducibility in results. 
+
 ### Clone git repository
 
 `git clone https://github.com/SeanTBlack/FNLGMD.git`
 
-There are two methods to execute this GMD pipeline: direct install or using a container. It is highly recommended to utilize the container rather than direct install to minimize errors. This pipeline requires many dependencies that are very particular. The container simplifies the install process and increases reproducibility in results. 
+### Container execution: 
 
-### Container execution: Singularity
+There are two containers for this software: one built with Singularity and one built with Docker
 
-This container is implemented using singularity. Singularity is a container management software similar to Docker. Due to certain features of Docker, it is often banned on most HPC systems. Singularity was built to serve as a replacement for Docker on HPC systems while still accepting Docker containers. Due to the high computational requirements for running GMD, we expect that most users will be using HPC systems or cloud computing systems. We are still exploring the integration of this pipeline into cloud computing systems, but most HPC systems will have singularity installed. Contact your system administrators for assistance.
+ Singularity is a container management software similar to Docker. Due to certain features of Docker, it is often banned on most HPC systems. Singularity was built to serve as a replacement for Docker on HPC systems while still accepting Docker containers. Due to the high computational requirements for running GMD, we expect that most users will be using HPC systems or cloud computing systems. Most HPC systems will have singularity installed. Contact your system administrators for assistance.
+
+#### Singularity:
 
 To install the singularity image, run the below command:
 
 `singularity pull library://seantblack/gmd/gmd_0_9.sif`
 
-Below are steps to run GMD through the container.
+Below are steps to run GMD through the singularity container.
 
 ```
-Set up a working directory <dir> 
+Set up a working directory (in the following steps, replace <dir> with that directory path) with read/write permission
 Copy contents of FNLGMD/workspace/LogP_demo into <dir>
 Edit the output_directory parameter in the config.yaml file that is now in <dir> to be 
     output_directory: '<dir>/'
@@ -47,6 +51,23 @@ If you receive the following error, your system administrators may have limited 
 OSError: Cannot save file into a non-existent directory: '<dir>'
 ```
 
+#### Docker:
+
+To install the Docker image, run the below command:
+
+`docker pull seantaylorblack/gmd_0_9:demo`
+
+Below are steps to run GMD through the Docker container.
+
+```
+- Set up a working directory (in the following steps, replace <dir> with that directory path) with read/write permission
+- Copy contents of FNLGMD/workspace/LogP_demo into <dir>
+- Edit the output_directory parameter in the config.yaml file that is now in <dir> to be 
+    output_directory: '<dir>/'
+$ singularity exec --bind /<dir>:/data /path/to/gmd_img.sif /run_gmd.sh
+
+docker run -it -v /<dir>:/data /path/to/gmd_img.sif
+```
 
 ### Direct install: Create conda environment
 
@@ -84,7 +105,7 @@ In this folder, there is a slurm file and configuration file that are intended t
 
 There is no "go to" values for many of the parameters. Each problem requires different settings and there is not quick way to determine the optimal values. Changing the parameters can have significant effects on the selection pressure, convergence, and diversity. It is important that you explore these parameters and learn about the effect each parameter has on the population as a whole. 
 
-The genetic algorithm is just a starting point. There are many modifications to canonical GA that can be done for particular applications. Consider trying new variations as well such as changing the selection strategy, introducing elitism into the population, or creating an adaptive GA where the mutation and crossover probabilities change depending on performance. This repository is intended to be modified and tailored to a specific use case. We will introduce some educational material into the repository in a later update to help guide new users in how to change parameters.
+The genetic algorithm (GA) is just a starting point. There are many modifications to canonical GA that can be done for particular applications. Consider trying new variations as well such as changing the selection strategy, introducing elitism into the population, or creating an adaptive GA where the mutation and crossover probabilities change depending on performance. This repository is intended to be modified and tailored to a specific use case. We will introduce some educational material into the repository in a later update to help guide new users in how to change parameters.
 
 ## Issues:
 

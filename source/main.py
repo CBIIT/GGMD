@@ -1,9 +1,10 @@
 #Imports
-from generative_network import create_generative_model
+#from generative_network import create_generative_model
+from generative_networks.generative_network_factory import create_generative_model
 import argparse
 import yaml
 from yaml import Loader
-from scorer import create_scorer
+from scorers.scorer_factory import create_scorer
 from data_tracker import Tracker
 
 def main():
@@ -32,7 +33,6 @@ def main():
 
     #prepare population:
     population = evaluator.score(population)
-    tracker.create_tracker(population)
     print("Population evaluated")
 
     #Begin optimizing
@@ -46,8 +46,7 @@ def main():
 
         # Update Data Tracker
         population = tracker.update_tracker(population)
-    print(population)
-    print("columns for population: ", population.columns)
+        
     tracker.publish_data()
 
 if __name__ == "__main__":

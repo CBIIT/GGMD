@@ -1,9 +1,9 @@
 model_type: 'jtnn-fnl'
-#smiles_input_file: '/mnt/projects/ATOM/blackst/FNLGMD/source/generative_models/JTNN/icml18_jtnn/data/moses/debug.txt'
-smiles_input_file: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/all.txt'
-output_directory: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/'
-scorer_type: 'FNL'
-num_epochs: 2
+
+smiles_input_file: './examples/LogP_AutoGrow/zinc_smiles.txt'
+output_directory: './examples/LogP_JTVAE/'
+scorer_type: 'LogPTestCase'
+num_epochs: 1
 
 #Selection/Optimization params
 optimizer_type: 'geneticoptimizer'
@@ -19,6 +19,6 @@ elite_perc: 0
 initial_pop_size: 50
 max_population: 50
 
-#FNL JTNN
-vocab_path: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/all_vocab.txt'
-model_path: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/model.epoch-35'
+#FNL JTNN specific
+vocab_path: './examples/LogP_JTVAE/all_vocab.txt'
+model_path: './examples/LogP_JTVAE/model.epoch-35'

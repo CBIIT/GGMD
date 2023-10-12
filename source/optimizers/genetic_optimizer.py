@@ -15,7 +15,7 @@ class GeneticOptimizer(Optimizer):
             raise ValueError(f"Unknown optima type {self.optima_type}. Available options are: {['minima', 'maxima']}")
 
     def tournament_selection(self, selection_pool):
-        selection_pool[["fitness", "compound_id"]] = selection_pool[["fitness", "compound_id"]].apply(pd.to_numeric)
+        selection_pool[["fitness"]] = selection_pool[["fitness"]].apply(pd.to_numeric)
         
         if self.optima_type == "minima":
             return selection_pool.fitness.idxmin()
@@ -26,7 +26,6 @@ class GeneticOptimizer(Optimizer):
         self.population = copy.deepcopy(population)
         selected_population = pd.DataFrame(columns=['compound_id', 'smiles', 'generation', 'chromosome', 'fitness'])
 
-        #while len(selected_population) < num_survived:
         while len(selected_population) < size:
             #Setup the pool of individuals for the tournament selection to be a random sampling of the population
             #Without replacement means that the same individual will not appear in the sampling more than once
