@@ -63,10 +63,9 @@ Below are steps to run GMD through the Docker container.
 - Set up a working directory (in the following steps, replace <dir> with that directory path) with read/write permission
 - Copy contents of FNLGMD/workspace/LogP_demo into <dir>
 - Edit the output_directory parameter in the config.yaml file that is now in <dir> to be 
-    output_directory: '<dir>/'
-$ singularity exec --bind /<dir>:/data /path/to/gmd_img.sif /run_gmd.sh
+    output_directory: '<dir>'
 
-docker run -it -v /<dir>:/data /path/to/gmd_img.sif
+docker run -v /<dir>:/data gmd_0_9:demo /run_gmd.sh
 ```
 
 ### Direct install: Create conda environment
