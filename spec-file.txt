@@ -4,7 +4,7 @@
 @EXPLICIT
 https://repo.anaconda.com/pkgs/main/linux-64/_libgcc_mutex-0.1-main.conda
 https://repo.anaconda.com/pkgs/main/linux-64/blas-1.0-mkl.conda
-https://conda.anaconda.org/conda-forge/linux-64/ca-certificates-2022.12.7-ha878542_0.conda
+https://repo.anaconda.com/pkgs/main/linux-64/ca-certificates-2023.05.30-h06a4308_0.conda
 https://repo.anaconda.com/pkgs/main/linux-64/intel-openmp-2021.4.0-h06a4308_3561.conda
 https://repo.anaconda.com/pkgs/main/linux-64/ld_impl_linux-64-2.38-h1181459_1.conda
 https://repo.anaconda.com/pkgs/main/linux-64/libgfortran4-7.5.0-ha8ba4b0_17.conda
@@ -27,10 +27,11 @@ https://repo.anaconda.com/pkgs/main/linux-64/libiconv-1.16-h7f8727e_2.conda
 https://repo.anaconda.com/pkgs/main/linux-64/libtasn1-4.16.0-h27cfd23_0.conda
 https://repo.anaconda.com/pkgs/main/linux-64/libunistring-0.9.10-h27cfd23_0.conda
 https://conda.anaconda.org/conda-forge/linux-64/libuuid-2.32.1-h7f98852_1000.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/libwebp-base-1.2.4-h5eee18b_1.conda
 https://conda.anaconda.org/conda-forge/linux-64/lz4-c-1.9.3-h9c3ff4c_1.tar.bz2
 https://repo.anaconda.com/pkgs/main/linux-64/ncurses-6.3-h5eee18b_3.conda
 https://repo.anaconda.com/pkgs/main/linux-64/openh264-2.1.1-h4ff587b_0.conda
-https://repo.anaconda.com/pkgs/main/linux-64/openssl-1.1.1s-h7f8727e_0.conda
+https://repo.anaconda.com/pkgs/main/linux-64/openssl-1.1.1v-h7f8727e_0.conda
 https://conda.anaconda.org/conda-forge/linux-64/pcre-8.45-h9c3ff4c_0.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/pixman-0.38.0-h516909a_1003.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/pthread-stubs-0.4-h36c2ea0_1001.tar.bz2
@@ -56,7 +57,7 @@ https://conda.anaconda.org/conda-forge/linux-64/zstd-1.4.9-ha95c52a_0.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/boost-cpp-1.74.0-h9359b55_0.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/freetype-2.10.4-h0708190_1.tar.bz2
 https://repo.anaconda.com/pkgs/main/linux-64/gnutls-3.6.15-he1e5248_0.conda
-https://conda.anaconda.org/conda-forge/linux-64/libtiff-4.0.10-hc3755c2_1005.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/libtiff-4.2.0-h85742a9_0.conda
 https://repo.anaconda.com/pkgs/main/linux-64/sqlite-3.38.5-hc218d9a_0.conda
 https://conda.anaconda.org/conda-forge/linux-64/xorg-libx11-1.7.2-h7f98852_0.tar.bz2
 https://conda.anaconda.org/pytorch/linux-64/ffmpeg-4.3-hf484d3e_0.tar.bz2
@@ -65,7 +66,7 @@ https://repo.anaconda.com/pkgs/main/linux-64/python-3.8.13-h12debd9_0.conda
 https://conda.anaconda.org/conda-forge/linux-64/xorg-libxext-1.3.4-h7f98852_1.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/xorg-libxrender-0.9.10-h7f98852_1003.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/cairo-1.16.0-h3fc0475_1005.tar.bz2
-https://conda.anaconda.org/conda-forge/noarch/certifi-2022.12.7-pyhd8ed1ab_0.conda
+https://repo.anaconda.com/pkgs/main/linux-64/certifi-2023.7.22-py38h06a4308_0.conda
 https://repo.anaconda.com/pkgs/main/noarch/charset-normalizer-2.0.4-pyhd3eb1b0_0.conda
 https://conda.anaconda.org/conda-forge/noarch/colorama-0.4.6-pyhd8ed1ab_0.tar.bz2
 https://conda.anaconda.org/conda-forge/noarch/cycler-0.11.0-pyhd8ed1ab_0.tar.bz2
@@ -78,6 +79,7 @@ https://conda.anaconda.org/conda-forge/noarch/pyparsing-3.0.9-pyhd8ed1ab_0.tar.b
 https://repo.anaconda.com/pkgs/main/linux-64/pysocks-1.7.1-py38h06a4308_0.conda
 https://conda.anaconda.org/conda-forge/linux-64/python_abi-3.8-2_cp38.tar.bz2
 https://conda.anaconda.org/conda-forge/noarch/pytz-2022.1-pyhd8ed1ab_0.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/pyyaml-6.0-py38h5eee18b_1.conda
 https://conda.anaconda.org/conda-forge/noarch/six-1.16.0-pyh6c4a22f_0.tar.bz2
 https://repo.anaconda.com/pkgs/main/noarch/typing_extensions-4.1.1-pyh06a4308_0.conda
 https://repo.anaconda.com/pkgs/main/noarch/wheel-0.37.1-pyhd3eb1b0_0.conda
@@ -113,4 +115,3 @@ https://repo.anaconda.com/pkgs/main/linux-64/scipy-1.7.3-py38hc147768_0.conda
 https://conda.anaconda.org/pytorch/linux-64/torchvision-0.13.0-py38_cpu.tar.bz2
 https://repo.anaconda.com/pkgs/main/linux-64/pandas-1.4.3-py38h6a678d5_0.conda
 https://conda.anaconda.org/conda-forge/linux-64/rdkit-2020.09.5-py38h2bca085_0.tar.bz2
-https://repo.anaconda.com/pkgs/main/linux-64/pyyaml-6.0-py38h5eee18b_1.conda
