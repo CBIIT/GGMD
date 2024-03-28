@@ -1,0 +1,36 @@
+model_type: 'jtnn-fnl'
+
+smiles_input_file: '/path/to/FNLGMD/examples/LogP_JTVAE/all.txt'
+output_directory: '/path/to//path/output_directory'
+scorer_type: 'ampl_model'
+num_epochs: 1
+
+#Selection/Optimization params
+optimizer_type: 'geneticoptimizer'
+tourn_size: 15
+mate_prob: 0.7
+mutate_prob: 0.1
+mutation_std: 1
+max_clones: 1
+optima_type: "maxima"
+selection_type: "tournament"
+elite_perc: 0
+
+initial_pop_size: 50
+max_population: 50
+
+#FNL JTNN specific
+vocab_path: '/path/to/FNLGMD/examples/LogP_JTVAE/all_vocab.txt'
+model_path: '/path/to/FNLGMD/examples/LogP_JTVAE/model.epoch-35' #
+
+#AMPL scorer (singularity)
+container_type: 'singularity'
+ampl_image: '/path/to/singularity_container_name.sif' #Set this value to point to the location of your singularity container.
+target_col_name: 'pIC50' #Change this to match your target
+working_directory: 'path/to/workspace' #This directory is what will be mounted to the container to pass files in and out
+
+#AMPL scorer (Docker)
+#container_type: 'docker'
+#ampl_image: 'docker_file_name:with_optional_tag_if_used' #Set this to point to the 
+#target_col_name: 'pIC50' #Change this to match your target
+#working_directory: '/path/to/workspace' #This directory is what will be mounted to the container to pass files in and out

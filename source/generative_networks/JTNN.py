@@ -142,7 +142,6 @@ class JTNN_FNL(GenerativeModel):
             smiles = population['smiles']
             chromosome = self.encode(smiles)
 
-            
             assert len(smiles) == len(chromosome)
 
             population['chromosome'] = chromosome
