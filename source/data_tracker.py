@@ -64,7 +64,7 @@ class Tracker():
         return population
     
     def publish_data(self):
-        self.master_df.to_csv(self._output_directory + "data_all_generations.csv", index=False)
+        self.master_df.to_csv(self._output_directory + "/data_all_generations.csv", index=False)
         print(self.master_df)
 
 
