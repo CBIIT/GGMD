@@ -19,7 +19,8 @@ elite_perc: 0
 initial_pop_size: 50
 max_population: 50
 
-#autogrow specific
+#Generative model parameters:
+##autogrow specific
 num_crossovers: 20
 num_mutations: 20
 num_elite: 10

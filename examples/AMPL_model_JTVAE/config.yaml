@@ -19,7 +19,8 @@ elite_perc: 0
 initial_pop_size: 50
 max_population: 50
 
-#FNL JTNN specific
+#Generative model parameters:
+##FNL JTVAE specific
 vocab_path: '/path/to/FNLGMD/examples/LogP_JTVAE/all_vocab.txt'
 model_path: '/path/to/FNLGMD/examples/LogP_JTVAE/model.epoch-35' #
 
@@ -29,7 +30,7 @@ ampl_image: '/path/to/singularity_container_name.sif' #Set this value to point t
 target_col_name: 'pIC50' #Change this to match your target
 working_directory: 'path/to/workspace' #This directory is what will be mounted to the container to pass files in and out
 
-#AMPL scorer (Docker)
+#AMPL scorer (Docker) The below variables are here to serve as an example of applying a Docker image instead of singularity
 #container_type: 'docker'
 #ampl_image: 'docker_file_name:with_optional_tag_if_used' #Set this to point to the 
 #target_col_name: 'pIC50' #Change this to match your target
