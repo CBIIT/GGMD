@@ -21,7 +21,7 @@ There are two methods to execute this GMD pipeline: direct install or using a co
 
 ### Clone git repository
 
-`git clone https://github.com/SeanTBlack/FNLGMD.git`
+`git clone https://github.com/CBIIT/GGMD.git`
 
 ### Container execution: 
 
