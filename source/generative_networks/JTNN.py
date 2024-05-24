@@ -12,6 +12,7 @@ Log = logging.getLogger(__name__)
 molvs_log = logging.getLogger('molvs')
 molvs_log.setLevel(logging.WARNING)
 
+pd.options.mode.chained_assignment = None  # This line silences some of the pandas warning messages
 
 class JTNN_FNL(GenerativeModel):
 
@@ -22,12 +23,16 @@ class JTNN_FNL(GenerativeModel):
 
         #New optimizer structure STB
         self.optimizer = create_optimizer(params)
-        self.mate_prob = params.mate_prob
         self.max_population = params.max_population
         self.mutate_prob = params.mutate_prob
         self.mutation_std = params.mutation_std
-        self.tree_sd = 4.86
-        self.molg_sd = 0.0015
+
+        self.elite_size = int(params.elite_ratio * self.max_population)
+        if self.elite_size % 2 != 0:
+            self.elite_size += 1
+        self.non_elite_size = int(self.max_population - self.elite_size)
+
+        self.max_clones = params.max_clones
 
     def encode(self, smiles) -> list:
         print("Encoding ", len(smiles), " molecules")
@@ -59,36 +64,52 @@ class JTNN_FNL(GenerativeModel):
         return smiles
         
     def crossover(self, population):
-        print("Crossover beginning population size: ", len(population))
-        num_children = int(self.mate_prob * self.max_population) #STB int((0.3 * 100)) = 30
-        parents_idx = np.random.randint(0, len(population), (num_children, 2)) #Sets up the indexes for parents in shape [[parent1, parent2], ...]
-        
+        num_children = len(population)
+
         parent_1 = []
         parent_2 = []
         child_chrom = []
-        for i in range(num_children):
-            parents = population.iloc[parents_idx[i]]
-            parent_chrom = np.vstack(parents["chromosome"].values)
-            parent_1.append(parents.compound_id.values[0])
-            parent_2.append(parents.compound_id.values[1])
 
-            selected_genes = np.random.randint(0, 2, self.chromosome_length)
-            child_chromosome = np.where(selected_genes, parent_chrom[1], parent_chrom[0])
-            child_chrom.append(child_chromosome)
+        for i in range(0, len(population), 2):
+            parent1 = population.iloc[i]
+            parent2 = population.iloc[i+1]
 
-        children_df = pd.DataFrame({"chromosome": child_chrom, "fitness": np.full(num_children, np.nan), "parent1_id": parent_1, "parent2_id": parent_2})
+            parent1_chrom = parent1["chromosome"]
+            parent2_chrom = parent2["chromosome"]
+
+            #Add in parent_1 and parent_2 id's for child1 since child1 is being added to the list first later.
+            parent_1.append(parent1.compound_id)
+            parent_2.append(parent2.compound_id)
+
+            #Now add in parent_1 and parent_2 id's for child2. These id's should be flipped from child1's parents.
+            parent_1.append(parent2.compound_id)
+            parent_2.append(parent1.compound_id)
+
+            try:
+                parent1_tree_vec_left, parent1_tree_vec_right, parent1_mol_vec_left, parent1_mol_vec_right = np.hsplit(parent1_chrom, 4)
+                parent2_tree_vec_left, parent2_tree_vec_right, parent2_mol_vec_left, parent2_mol_vec_right = np.hsplit(parent2_chrom, 4)
+            except:
+                parent1_tree_vec, parent1_mol_vec = np.hsplit(parent1_chrom, 2)
+                parent2_tree_vec, parent2_mol_vec = np.hsplit(parent2_chrom, 2)
+
+                parent1_tree_vec_left, parent1_tree_vec_right = parent1_tree_vec[0:int(len(parent1_tree_vec))], parent1_tree_vec[int(len(parent1_tree_vec)):]
+                parent2_tree_vec_left, parent2_tree_vec_right = parent2_tree_vec[0:int(len(parent2_tree_vec))], parent2_tree_vec[int(len(parent2_tree_vec)):]
+
+                parent1_mol_vec_left, parent1_mol_vec_right = parent1_mol_vec[0:int(len(parent1_mol_vec))], parent1_mol_vec[int(len(parent1_mol_vec)):]
+                parent2_mol_vec_left, parent2_mol_vec_right = parent2_mol_vec[0:int(len(parent2_mol_vec))], parent2_mol_vec[int(len(parent2_mol_vec)):]
+
+            child1_chrom = np.concatenate([parent1_tree_vec_left, parent2_tree_vec_right, parent1_mol_vec_left, parent2_mol_vec_right])
+            child2_chrom = np.concatenate([parent2_tree_vec_left, parent1_tree_vec_right, parent2_mol_vec_left, parent1_mol_vec_right])
+            
+            child_chrom.append(child1_chrom)
+            child_chrom.append(child2_chrom)
         
-        population = pd.concat([population, children_df])
-        population.reset_index(drop=True, inplace=True)
-        print("Number of children: ", len(children_df), " length of total population: ", len(population))
+        children_df = pd.DataFrame({"compound_id": np.full(num_children, np.nan), "chromosome": child_chrom, "fitness": np.full(num_children, np.nan), "generation": np.full(num_children, np.nan), "source": np.full(num_children, "crossover"), "parent1_id": parent_1, "parent2_id": parent_2})
         
-        return population
+        return children_df
     
     def mutate(self, population):
-        #TODO: Need to test this method. My question is that we need to decide if mutations
-        # should happen in place or if a mutated individual should create a new individual in 
-        # the population. Mutations happen after crossover and can happen to new or old individuals
-
+       
         mut_indices = np.where(np.random.rand(len(population)) < self.mutate_prob)[0]
 
         for idx in mut_indices:
@@ -96,28 +117,19 @@ class JTNN_FNL(GenerativeModel):
 
             tree_vec, mol_vec = np.hsplit(chromosome, 2)
 
-            tree_mut_ind = np.where(np.random.rand(len(tree_vec)) < self.mutate_prob)
-            tree_vec[tree_mut_ind] = np.random.normal(loc=tree_vec[tree_mut_ind], scale=self.tree_sd * self.mutation_std)
+            tree_mut_ind = np.random.randint(0, len(tree_vec), 1)
+            tree_vec[tree_mut_ind] = np.random.normal(loc=tree_vec[tree_mut_ind], scale=self.mutation_std) #TODO: Is this the right way to handle the scale of mutations?
             
-            mol_mut_ind = np.where(np.random.rand(len(mol_vec)) < self.mutate_prob)
-            mol_vec[mol_mut_ind] = np.random.normal(loc=mol_vec[mol_mut_ind], scale=self.molg_sd * self.mutation_std)
-
+            mol_mut_ind = np.random.randint(0, len(mol_vec), 1)
+            mol_vec[mol_mut_ind] = np.random.normal(loc=mol_vec[mol_mut_ind], scale=self.mutation_std) #TODO: Is this the right way to handle the scale of mutations?
+            
             
             num_pts_mutated = len(tree_mut_ind) + len(mol_mut_ind)
 
             if num_pts_mutated > 0:
                 chromosome = np.concatenate([tree_vec, mol_vec])
 
-                if np.isnan(population['fitness'].iloc[idx]) == False:
-                    # If the individuals fitness is not nan, then this is an individual
-                    # from a previous generation. We need to reset fitness, smiles, parent ids
-                    # and compound_id.
-                    population['parent1_id'].iloc[idx] = population['compound_id'].iloc[idx]
-                    population['parent2_id'].iloc[idx] = np.nan
-                    population['smiles'].iloc[idx] = np.nan
-                    population['fitness'].iloc[idx] = np.nan
-                    population['compound_id'].iloc[idx] = np.nan
-
+                population['source'].iloc[idx] = "crossover & mutation"
                 population['chromosome'].iloc[idx] = chromosome
 
         return population
@@ -152,14 +164,49 @@ class JTNN_FNL(GenerativeModel):
 
         #Optimize:
         print("Optimizing")
-        size = int(self.mate_prob * len(population)) #int((1 - 0.3) * 50) = 35
-        population = self.optimizer.select_non_elite(population, size)
-        population = self.crossover(population=population)
-        population = self.mutate(population)
 
-        #Decode:
-        smiles = self.decode(population['chromosome'].tolist())
+        #Elite population:
+        elite_population = self.optimizer.select_elite_pop(population, self.elite_size)
 
-        population['smiles'] = smiles
+        #Non-elite population:
+        non_elite_population = pd.DataFrame()
         
-        return population
+        while len(non_elite_population) < self.non_elite_size:
+            num_needed = int((self.non_elite_size - len(non_elite_population)) * 1.15)
+            if num_needed % 2 != 0:
+                num_needed += 1
+            next_batch = self.optimizer.select_non_elite(population, num_needed)
+            next_batch = self.crossover(next_batch)
+            next_batch = self.mutate(next_batch)
+            
+
+            next_batch_smiles = self.decode(next_batch['chromosome'].tolist())
+            next_batch['smiles'] = next_batch_smiles
+
+            non_elite_population = pd.concat([non_elite_population, next_batch])
+
+            smiles_counts = non_elite_population.groupby(non_elite_population['smiles'], as_index=False).size()
+            smiles_counts = smiles_counts[smiles_counts['size'] > self.max_clones]
+            smiles_to_remove = smiles_counts['smiles'].tolist()
+            count = smiles_counts['size'].tolist()
+
+            indexes_to_remove = []
+
+            for smi, count in zip(smiles_to_remove, count):
+                c = count - self.max_clones
+                indexes = non_elite_population[non_elite_population['smiles'] == smi].tail(c).index.values.tolist()
+                indexes_to_remove.extend(indexes)
+
+            non_elite_population.drop(indexes_to_remove, inplace=True)
+
+        if len(non_elite_population) > self.non_elite_size:
+            num_to_remove = abs(len(non_elite_population) - self.non_elite_size)
+            non_elite_population.drop(non_elite_population.tail(num_to_remove).index,inplace=True)
+
+        #combine mutation_pop, crossover_pop, elite_pop
+        combined_population = pd.concat([elite_population, non_elite_population])
+        combined_population.reset_index(drop=True, inplace=True)
+
+        smiles_counts = combined_population.groupby(combined_population['smiles'], as_index=False).size()
+        
+        return combined_population
