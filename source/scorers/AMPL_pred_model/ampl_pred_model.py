@@ -18,6 +18,9 @@ class ampl_pred_model(Scorer):
         #       singularity pull ampl.sif docker://atomsci/atomsci-ampl:v1.5.0
         # This command pulls AMPL's official docker container and the generates a singularity container from it
 
+        if 'fitness' in population.columns:
+            population.drop(["fitness"], axis=1, inplace=True)
+
         population.to_csv(f"{self.working_directory}/unscored_population.csv", index=False)
 
         print("entering container")

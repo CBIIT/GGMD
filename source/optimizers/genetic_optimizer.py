@@ -51,14 +51,16 @@ class GeneticOptimizer(Optimizer):
         print("Population_size after selection ", len(self.population))
 
         return selected_population
-    
+
     def select_elite_pop(self, population, size):
+        population = copy.deepcopy(population)
+        
         if self.optima_type == "minima":
             sort_order = True
         elif self.optima_type == "maxima":
             sort_order = False
 
-        selected_population = population.sort_values(by=['fitness'], ascending = sort_order)
+        selected_population = population.sort_values(by=['fitness'], ascending=sort_order)
         selected_population = selected_population.head(size)
 
         return selected_population

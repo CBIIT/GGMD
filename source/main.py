@@ -36,8 +36,8 @@ def main():
     print("Population evaluated")
 
     #Begin optimizing
-    for epoch in range(params.num_epochs):
-        print(f"epoch #{epoch}")
+    for epoch in range(1, params.num_epochs + 1):
+        print(f"\nGeneration #{epoch}")
 
         population = generative_model.optimize(population)
         

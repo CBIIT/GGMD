@@ -28,6 +28,8 @@ class Tracker():
         population['smiles'] = smiles_list
         population['generation'] = [[0] for _ in range(len(smiles_list))]
         population['source'] = ['initial' for _ in range(len(smiles_list))]
+        population['parent1_id'] = np.full(len(smiles_list), np.nan) #NEW
+        population['parent2_id'] = np.full(len(smiles_list), np.nan) #NEW
 
         self._next_id = len(comp_ids)
 
@@ -56,6 +58,23 @@ class Tracker():
                 generations[i].append(self.generation)
 
         population['generation'] = generations
+
+        """
+        df_new = population.iloc[np.where(population['compound_id'].isna())]
+        ids, gen = [], []
+        for x in range(len(df_new)):
+            ids.append(50 + x)
+            gen.append([1])
+        #ids = [50 + x for x in range(len(df_new))]
+        #gen = [[1] for _ in range(len(df_new))]
+        population['compound_id'].iloc[np.where(population['compound_id'].isna())] = ids
+        population['generation'].iloc[np.where(population['generation'].isna())] = gen
+
+        df_old = population.iloc[np.where(population['generation'].isna() != True)]
+        generations = df_old['generation'].tolist()
+        for g in gens:
+            g.append(self.generation)
+        """
         
         #Add current generation's population to the master tracker
         self.master_df = pd.concat([self.master_df, population])

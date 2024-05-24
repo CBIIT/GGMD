@@ -1,20 +1,20 @@
 model_type: 'autogrow'
 
 smiles_input_file: './examples/LogP_AutoGrow/all.txt'
-output_directory: './examples/LogP_AutoGrow/'
+output_directory: '/path/to/output/directory'
 scorer_type: 'LogPTestCase'
-num_epochs: 1
+num_epochs: 10
 
 #Selection/Optimization params
 optimizer_type: 'geneticoptimizer'
 tourn_size: 15
 mate_prob: 0.7
-mutate_prob: 0.1
+mutate_prob: 0.2
 mutation_std: 1
 max_clones: 1
 optima_type: "maxima"
 selection_type: "tournament"
-elite_perc: 0
+elite_perc: 0.2
 
 initial_pop_size: 50
 max_population: 50
