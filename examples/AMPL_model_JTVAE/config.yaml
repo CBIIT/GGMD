@@ -1,7 +1,7 @@
 model_type: 'jtnn-fnl'
 
-smiles_input_file: '/mnt/projects/ATOM/blackst/GGMD/examples/LogP_AutoGrow/zinc_smiles.txt'
-output_directory: '/mnt/projects/ATOM/blackst/GMD_workspace/ampl_ggmd_test'
+smiles_input_file: '../LogP_AutoGrow/zinc_smiles.txt'
+output_directory: '/path/to/output/directory' #where the population will be saved as an output
 scorer_type: 'ampl_model'
 num_epochs: 2
 
@@ -21,14 +21,14 @@ max_population: 50
 
 #Generative model parameters:
 ##FNL JTVAE specific
-vocab_path: '/mnt/projects/ATOM/blackst/GGMD/examples/LogP_JTVAE/all_vocab.txt'
-model_path: '/mnt/projects/ATOM/blackst/GGMD/examples/LogP_JTVAE/model.epoch-35' #
+vocab_path: '/path/to/GGMD/examples/LogP_JTVAE/all_vocab.txt'
+model_path: '/path/to/GGMD/examples/LogP_JTVAE/model.epoch-35'
 
 #AMPL scorer (singularity)
 container_type: 'singularity'
-ampl_image: '/home/blackst/ampl_ggmd_test/ampl.sif' #Set this value to point to the location of your singularity container.
+ampl_image: '/path/to/ampl.sif' #Set this value to point to the location of your singularity container.
 target_col_name: 'pIC50' #Change this to match your target
-working_directory: '/home/blackst/ampl_ggmd_test/workspace' #This directory is what will be mounted to the container to pass files in and out
+working_directory: '/path/to/workspace/directory' #This directory is what will be mounted to the container to pass files in and out
 
 #AMPL scorer (Docker) The below variables are here to serve as an example of applying a Docker image instead of singularity
 #container_type: 'docker'

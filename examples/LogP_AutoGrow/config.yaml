@@ -1,6 +1,6 @@
 model_type: 'autogrow'
 
-smiles_input_file: './examples/LogP_AutoGrow/all.txt'
+smiles_input_file: '/path/to/GGMD/examples/LogP_AutoGrow/zinc_smiles.txt'
 output_directory: '/path/to/output/directory'
 scorer_type: 'LogPTestCase'
 num_epochs: 10

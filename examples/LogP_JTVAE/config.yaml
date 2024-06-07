@@ -1,6 +1,6 @@
 model_type: 'jtnn-fnl'
 
-smiles_input_file: 'all.txt'
+smiles_input_file: '/path/to/GGMD/examples/LogP_JTVAE/zinc_smiles.txt'
 output_directory: '/path/to/output/directory'
 scorer_type: 'LogPTestCase'
 num_epochs: 10

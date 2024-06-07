@@ -1,4 +1,4 @@
-import time
+import time, copy 
 import logging
 import numpy as np
 import pandas as pd
@@ -150,7 +150,6 @@ class JTNN_FNL(GenerativeModel):
         
         if self.is_first_epoch:
             #Encode:
-            
             smiles = population['smiles']
             chromosome = self.encode(smiles)
 
@@ -169,10 +168,10 @@ class JTNN_FNL(GenerativeModel):
         elite_population = self.optimizer.select_elite_pop(population, self.elite_size)
 
         #Non-elite population:
-        non_elite_population = pd.DataFrame()
-        
-        while len(non_elite_population) < self.non_elite_size:
-            num_needed = int((self.non_elite_size - len(non_elite_population)) * 1.15)
+        full_population = copy.deepcopy(elite_population)
+
+        while len(full_population) < self.max_population:
+            num_needed = int((self.max_population - len(full_population)) * 1.15)
             if num_needed % 2 != 0:
                 num_needed += 1
             next_batch = self.optimizer.select_non_elite(population, num_needed)
@@ -183,9 +182,9 @@ class JTNN_FNL(GenerativeModel):
             next_batch_smiles = self.decode(next_batch['chromosome'].tolist())
             next_batch['smiles'] = next_batch_smiles
 
-            non_elite_population = pd.concat([non_elite_population, next_batch])
+            full_population = pd.concat([full_population, next_batch])
 
-            smiles_counts = non_elite_population.groupby(non_elite_population['smiles'], as_index=False).size()
+            smiles_counts = full_population.groupby(full_population['smiles'], as_index=False).size()
             smiles_counts = smiles_counts[smiles_counts['size'] > self.max_clones]
             smiles_to_remove = smiles_counts['smiles'].tolist()
             count = smiles_counts['size'].tolist()
@@ -194,19 +193,15 @@ class JTNN_FNL(GenerativeModel):
 
             for smi, count in zip(smiles_to_remove, count):
                 c = count - self.max_clones
-                indexes = non_elite_population[non_elite_population['smiles'] == smi].tail(c).index.values.tolist()
+                indexes = full_population[full_population['smiles'] == smi].tail(c).index.values.tolist()
                 indexes_to_remove.extend(indexes)
 
-            non_elite_population.drop(indexes_to_remove, inplace=True)
+            full_population.drop(indexes_to_remove, inplace=True)
 
-        if len(non_elite_population) > self.non_elite_size:
-            num_to_remove = abs(len(non_elite_population) - self.non_elite_size)
-            non_elite_population.drop(non_elite_population.tail(num_to_remove).index,inplace=True)
-
-        #combine mutation_pop, crossover_pop, elite_pop
-        combined_population = pd.concat([elite_population, non_elite_population])
-        combined_population.reset_index(drop=True, inplace=True)
-
-        smiles_counts = combined_population.groupby(combined_population['smiles'], as_index=False).size()
+        if len(full_population) > self.max_population:
+            num_to_remove = abs(len(full_population) - self.max_population)
+            full_population.drop(full_population.tail(num_to_remove).index, inplace=True)
         
-        return combined_population
+        full_population.reset_index(drop=True, inplace=True)
+        
+        return full_population

@@ -50,13 +50,13 @@ class AutoGrow(GenerativeModel):
 
         self.generation_number += 1
         self.previous_generation = population
-        print("\n\nSize of self.previous_generation before mutation: ", len(self.previous_generation))
+        
         #generate mutation_pop
         mutated_df = self.mutate()
         source = ['mutation' for _ in range(len(mutated_df))]
         mutated_df['source'] = source
         mutated_df['generation'] = [[] for _ in range(len(mutated_df))]
-        print("Size of self.previous_generation after mutation: ", len(self.previous_generation))
+        
         #generate crossover_pop
         crossed_df = self.crossover()
         source = ['crossover' for _ in range(len(crossed_df))]
@@ -65,15 +65,11 @@ class AutoGrow(GenerativeModel):
         
         #generate elite_pop
         elite_df = self.optimizer.select_elite_pop(population, self.num_elite)
-        print("\n\nelite df")
-        #print(elite_df)
         print(f"Elite population: size {elite_df.shape}")
         print("\n")
         
         #combine mutation_pop, crossover_pop, elite_pop
         combined_population = pd.concat([mutated_df, crossed_df, elite_df])
         combined_population.reset_index(drop=True, inplace=True)
-        #print("combined shape: ", combined_population.shape)
-        #print(combined_population)
         
         return combined_population
