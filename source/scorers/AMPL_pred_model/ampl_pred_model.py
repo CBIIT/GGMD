@@ -30,10 +30,9 @@ class ampl_pred_model(Scorer):
             os.system(f"docker run -v {self.working_directory}:/data {self.ampl_image} /data/run_inference.sh")
         print("container complete")
 
-        population = pd.read_csv(f"{self.working_directory}/scored_population.csv")
+        scored_population = pd.read_csv(f"{self.working_directory}/scored_population.csv")
 
-        #cleanup dataframe for 
-        population.rename(columns={f"{self.target_col_name}_pred": 'fitness'}, inplace=True)
-        population.drop([f"{self.target_col_name}_std", "orig_smiles"], axis=1, inplace=True)
+        #Add fitness from scored_population to population
+        population['fitness'] = scored_population[f'{self.target_col_name}_pred']
 
         return population
