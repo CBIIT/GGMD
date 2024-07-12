@@ -34,6 +34,22 @@ class JTNN_FNL(GenerativeModel):
 
         self.max_clones = params.max_clones
 
+        #population = self.encode_first_generation(population)
+
+    def prepare_population(self, population):
+    
+        #Encode:
+        smiles = population['smiles'].to_list()
+        chromosome = self.encode(smiles)
+
+        assert len(smiles) == len(chromosome)
+
+        population['chromosome'] = chromosome
+
+        self.chromosome_length = len(population["chromosome"].iloc[0]) #When I set self.population, this can be moved potentially
+        
+        return population
+    
     def encode(self, smiles) -> list:
         print("Encoding ", len(smiles), " molecules")
         
@@ -104,7 +120,7 @@ class JTNN_FNL(GenerativeModel):
             child_chrom.append(child1_chrom)
             child_chrom.append(child2_chrom)
         
-        children_df = pd.DataFrame({"compound_id": np.full(num_children, np.nan), "chromosome": child_chrom, "fitness": np.full(num_children, np.nan), "generation": np.full(num_children, np.nan), "source": np.full(num_children, "crossover"), "parent1_id": parent_1, "parent2_id": parent_2})
+        children_df = pd.DataFrame({"compound_id": np.full(num_children, np.nan), "chromosome": child_chrom, "fitness": np.full(num_children, np.nan), "source": np.full(num_children, "crossover"), "parent1_id": parent_1, "parent2_id": parent_2})
         
         return children_df
     
@@ -129,7 +145,11 @@ class JTNN_FNL(GenerativeModel):
             if num_pts_mutated > 0:
                 chromosome = np.concatenate([tree_vec, mol_vec])
 
-                population['source'].iloc[idx] = "crossover & mutation"
+                if population['source'].iloc[idx] == "crossover":
+                    population['source'].iloc[idx] = "crossover + mutation"
+                else:
+                    population['source'].iloc[idx] = "mutation"
+
                 population['chromosome'].iloc[idx] = chromosome
 
         return population
@@ -148,42 +168,42 @@ class JTNN_FNL(GenerativeModel):
         population - Pandas dataframe containing new smiles strings, ids, and 
         """
         
-        if self.is_first_epoch:
+        """if self.is_first_epoch:
             #Encode:
-            smiles = population['smiles']
-            chromosome = self.encode(smiles)
-
-            assert len(smiles) == len(chromosome)
-
-            population['chromosome'] = chromosome
-
-            self.chromosome_length = len(population["chromosome"].iloc[0]) #When I set self.population, this can be moved potentially
-
-            self.is_first_epoch = False
+            population = self.encode_first_generation(population)"""
 
         #Optimize:
         print("Optimizing")
 
         #Elite population:
         elite_population = self.optimizer.select_elite_pop(population, self.elite_size)
+        elite_population['source'] = np.full(len(elite_population), 'elitism')
 
         #Non-elite population:
         full_population = copy.deepcopy(elite_population)
+        #print("Before: population.shape ", population.shape)
+        #print(population['fitness'].to_list())
+        #print("population.columns", population.columns)
 
         while len(full_population) < self.max_population:
-            num_needed = int((self.max_population - len(full_population)) * 1.15)
-            if num_needed % 2 != 0:
+            #num_needed can be increased to create an excess of children to help in the case of duplicated smiles strings
+            num_needed = int((self.max_population - len(full_population)) * 1.5) 
+            if num_needed % 2 != 0: #num_needed needs to be an even number to select an even number of parents for reproduction
                 num_needed += 1
+
+            #Create next generation
             next_batch = self.optimizer.select_non_elite(population, num_needed)
             next_batch = self.crossover(next_batch)
             next_batch = self.mutate(next_batch)
             
-
+            #Decode new molecules
             next_batch_smiles = self.decode(next_batch['chromosome'].tolist())
             next_batch['smiles'] = next_batch_smiles
 
             full_population = pd.concat([full_population, next_batch])
 
+            #The following code counts how many repeated smiles strings there are. 
+            # The parameter max_clones allows you to define how many repeated smiles strings can exist in the population at any given time
             smiles_counts = full_population.groupby(full_population['smiles'], as_index=False).size()
             smiles_counts = smiles_counts[smiles_counts['size'] > self.max_clones]
             smiles_to_remove = smiles_counts['smiles'].tolist()
@@ -195,13 +215,14 @@ class JTNN_FNL(GenerativeModel):
                 c = count - self.max_clones
                 indexes = full_population[full_population['smiles'] == smi].tail(c).index.values.tolist()
                 indexes_to_remove.extend(indexes)
-
+            
             full_population.drop(indexes_to_remove, inplace=True)
+            
 
         if len(full_population) > self.max_population:
             num_to_remove = abs(len(full_population) - self.max_population)
             full_population.drop(full_population.tail(num_to_remove).index, inplace=True)
+            print(f"Removing {num_to_remove} rows due to excess members of population.")
         
         full_population.reset_index(drop=True, inplace=True)
-        
         return full_population

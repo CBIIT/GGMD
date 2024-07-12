@@ -23,17 +23,21 @@ def main():
 
     #initialize classes:
     evaluator = create_scorer(params)
-    generative_model = create_generative_model(params) 
     tracker = Tracker(params)
     print("classes initialized")
 
     #initialize population
     population = tracker.init_population()
     print("population initialized")
+    
+    generative_model = create_generative_model(params)
+    population = generative_model.prepare_population(population)
 
     #prepare population:
     population = evaluator.score(population)
     print("Population evaluated")
+
+    population = tracker.update_tracker(population)
 
     #Begin optimizing
     for epoch in range(1, params.num_epochs + 1):

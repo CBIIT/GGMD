@@ -8,6 +8,9 @@ class GenerativeModel(object):
         MJT Note: do we need the **kwargs argument?
         """
         self.params = params
+
+    def prepare_population(self, population):
+        return population
     
     def optimize(self):
         """
