@@ -1,11 +1,8 @@
 Create a database to store all compounds across generations
 
-Implement chemical space method
-
 Implement forcing data types being passed to and from functions (i.e. optimize function to generative_network.py should pass in a dataframe and return a dataframe)
 
 Look into package CReM (Chemically reasonable mutations)
-
 
 In optimizer.select method, df.sample can have a parameter called weights which allows you to assign a column. Rows with larger
 values in that column are more likely to be sampled. Could be a potential to weight the sampling towards stronger molecules.
