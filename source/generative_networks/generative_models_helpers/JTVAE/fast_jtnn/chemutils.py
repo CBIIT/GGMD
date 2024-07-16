@@ -4,7 +4,7 @@ from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import minimum_spanning_tree
 from collections import defaultdict
 from rdkit.Chem.EnumerateStereoisomers import EnumerateStereoisomers, StereoEnumerationOptions
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.vocab import Vocab
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.vocab import Vocab
 
 MST_MAX_WEIGHT = 100 
 MAX_NCAND = 2000

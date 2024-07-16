@@ -1,5 +1,5 @@
 #model_type: 'autogrow'
-model_type: 'jtnn-fnl'
+model_type: 'jtvae'
 
 smiles_input_file: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/all.txt'
 output_directory: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/'
@@ -20,7 +20,7 @@ elite_perc: 0
 initial_pop_size: 50
 max_population: 50
 
-#FNL JTNN
+#JTVAE
 vocab_path: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/all_vocab.txt'
 model_path: '/mnt/projects/ATOM/blackst/FNLGMD/examples/LogP_JTVAE/model.epoch-35'
 

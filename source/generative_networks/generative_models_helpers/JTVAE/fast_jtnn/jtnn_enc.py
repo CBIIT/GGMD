@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from collections import deque
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.mol_tree import Vocab, MolTree
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.nnutils import create_var, index_select_ND
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.mol_tree import Vocab, MolTree
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.nnutils import create_var, index_select_ND
 
 class JTNNEncoder(nn.Module):
 

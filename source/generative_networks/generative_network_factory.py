@@ -9,13 +9,13 @@ def create_generative_model(params):
     Returns:
         optmizer (object):  wrapper
     Raises: 
-        ValueError: Only params.VAE_type = "JTNN" is supported
+        ValueError: Only 'jtvae' & 'autogrow are supported
     """
 
-    if params.model_type.lower() == 'jtnn-fnl':
-        from generative_networks.JTNN import JTNN_FNL
+    if params.model_type.lower() == 'jtvae':
+        from generative_networks.JTVAE import JTVAE
 
-        return JTNN_FNL(params)
+        return JTVAE(params)
     elif params.model_type.lower() == 'autogrow':
         from generative_networks.AutoGrow import AutoGrow
 

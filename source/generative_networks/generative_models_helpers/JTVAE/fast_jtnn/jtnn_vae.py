@@ -1,15 +1,15 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.mol_tree import Vocab, MolTree
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.nnutils import create_var, flatten_tensor, avg_pool
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.jtnn_enc import JTNNEncoder
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.jtnn_dec import JTNNDecoder
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.mpn import MPN
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.jtmpn import JTMPN
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.datautils import tensorize
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.mol_tree import Vocab, MolTree
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.nnutils import create_var, flatten_tensor, avg_pool
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.jtnn_enc import JTNNEncoder
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.jtnn_dec import JTNNDecoder
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.mpn import MPN
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.jtmpn import JTMPN
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.datautils import tensorize
 
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.chemutils import enum_assemble, set_atommap, copy_edit_mol, attach_mols
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.chemutils import enum_assemble, set_atommap, copy_edit_mol, attach_mols
 import rdkit
 from rdkit import RDLogger
 import rdkit.Chem as Chem

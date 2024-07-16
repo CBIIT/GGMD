@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import rdkit.Chem as Chem
 import torch.nn.functional as F
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.nnutils import *
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.chemutils import get_mol
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.nnutils import *
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.chemutils import get_mol
 
 ELEM_LIST = ["C", "N", "O", "S", "F", "Si", "P", "Cl", "Br", "Mg", "Na", "Ca", "Fe", "Al", "I", "B", "K", "Se", "Zn", "H", "Cu", "Mn", "unknown",]
 

@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.mol_tree import Vocab, MolTree, MolTreeNode
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.nnutils import create_var, GRU
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.chemutils import enum_assemble, set_atommap
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.mol_tree import Vocab, MolTree, MolTreeNode
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.nnutils import create_var, GRU
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.chemutils import enum_assemble, set_atommap
 import copy
 
 MAX_NB = 15
