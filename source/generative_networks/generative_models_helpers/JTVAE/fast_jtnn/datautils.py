@@ -1,10 +1,10 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.mol_tree import MolTree
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.jtnn_enc import JTNNEncoder
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.mpn import MPN
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.jtmpn import JTMPN
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.mol_tree import MolTree
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.jtnn_enc import JTNNEncoder
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.mpn import MPN
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.jtmpn import JTMPN
 #JI import cPickle as pickle
 import pickle
 import os, random

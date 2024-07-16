@@ -1,4 +1,4 @@
-model_type: 'jtnn-fnl'
+model_type: 'jtvae'
 
 smiles_input_file: '/path/to/GGMD/examples/LogP_JTVAE/zinc_smiles.txt'
 output_directory: '/path/to/output/directory'
@@ -7,14 +7,14 @@ num_epochs: 10
 
 #Selection/Optimization params
 optimizer_type: 'geneticoptimizer'
-tourn_size: 25
-#mate_prob: 0.4
+selection_type: 'roulette' #roulette or tournament are accepted
+selection_pool_size: 5 #Previously called the tourn_size
 mutate_prob: 0.2
 mutation_std: 0.25 #NEEDS FURTHER REVIEW AND MODIFICATION TO YOUR PROBLEM
 max_clones: 1 #DEPENDS ON HOW MANY COPIES OF ONE MOLECULE YOU WANT. MORE ALLOWS FOR CONVERGENCE, LESS ENCOURAGES DIVERSITY
 optima_type: "maxima"
-selection_type: "tournament"
 elite_ratio: 0.2 #ELITE POPULATION GUARENTEES THE SURVIVAL OF THE TOP X MOLECULES
+sample_with_replacement: False #False means that during selection, selected parents will not be removed from the pool for parents.
 
 initial_pop_size: 200
 max_population: 200

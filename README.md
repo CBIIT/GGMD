@@ -19,9 +19,15 @@ Any new method generative model must be implemented as a class in the generative
 
 There are two methods to execute this GMD pipeline: direct install or using a container. It is highly recommended to utilize the container rather than direct install to minimize errors. This pipeline requires several python packages that each have particular dependencies. The containers simplify the install process and increases reproducibility in results. 
 
-### Clone git repository
 
-`git clone https://github.com/CBIIT/GGMD.git`
+### Direct install: Create conda environment
+
+```
+git clone https://github.com/CBIIT/GGMD.git
+cd GGMD
+conda create --name gmd_env --file spec-file.txt
+```
+
 
 ### Container execution: 
 
@@ -68,22 +74,6 @@ Below are steps to run GMD through the Docker container.
 docker run -v /<dir>:/data gmd_0_9:demo /run_gmd.sh
 ```
 
-### Direct install: Create conda environment
-
-```
-conda create -n <env_name> python=3.8
-conda activate <env_name> 
-conda install rdkit=2020.09.5 
-conda install numpy 
-conda install scipy
-conda install joblib
-conda install networkx 
-conda install pytorch torchvision cpuonly -c pytorch
-conda install yaml
-conda install pandas
-
-pip install Pebble
-```
 
 ## Getting started:
 
@@ -102,7 +92,9 @@ In this folder, there is a slurm file and configuration file that are intended t
 
 `python source/main.py -config examples/LogP_JTVAE/config.yaml`
 
-There is no "go to" values for many of the parameters. Each problem requires different settings and there is not quick way to determine the optimal values. Changing the parameters can have significant effects on the selection pressure, convergence, and diversity. It is important that you explore these parameters and learn about the effect each parameter has on the population as a whole. 
+There is no "go to" values for many of the parameters. Each problem requires different settings and there is not quick way to determine the optimal values. Changing the parameters can have significant effects on the selection pressure, convergence, and diversity. It is important that you explore these parameters and learn about the effect each parameter has on the population as a whole. Please refer to the following README file that describes all of the required variables to be included in the config file:
+
+`GGMD/examples/README.md`
 
 The genetic algorithm (GA) is just a starting point. There are many modifications to canonical GA that can be done for particular applications. Consider trying new variations as well such as changing the selection strategy, introducing elitism into the population, or creating an adaptive GA where the mutation and crossover probabilities change depending on performance. This repository is intended to be modified and tailored to a specific use case. We will introduce some educational material into the repository in a later update to help guide new users in how to change parameters.
 
@@ -114,5 +106,4 @@ Feedback is always greatly appreciated! This code is still in development, chang
 
 ## Development:
 
-If you want to suggest changes to the code base, please create a new branch from the master branch then create a merge request. Changes can include, but are not limited to implementing new generative models, scoring functions, optimization methods, etc...
-
+If you want to suggest changes to the code base, please create a fork from the master branch then create a merge request. Changes can include, but are not limited to implementing new generative models, scoring functions, optimization methods, and general bug fixes.

@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from optimizers.optimizer_factory import create_optimizer
 from generative_networks.base_generative_model import GenerativeModel
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.gen_latent import encode_smiles, decoder
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.gen_latent import encode_smiles, decoder
 
 Log = logging.getLogger(__name__)
 
@@ -14,12 +14,11 @@ molvs_log.setLevel(logging.WARNING)
 
 pd.options.mode.chained_assignment = None  # This line silences some of the pandas warning messages
 
-class JTNN_FNL(GenerativeModel):
+class JTVAE(GenerativeModel):
 
     def __init__(self, params):
         self.encoder = encode_smiles(params)
         self.decoder = decoder(params)
-        self.is_first_epoch = True
 
         #New optimizer structure STB
         self.optimizer = create_optimizer(params)
@@ -34,8 +33,6 @@ class JTNN_FNL(GenerativeModel):
 
         self.max_clones = params.max_clones
 
-        #population = self.encode_first_generation(population)
-
     def prepare_population(self, population):
     
         #Encode:
@@ -45,6 +42,8 @@ class JTNN_FNL(GenerativeModel):
         assert len(smiles) == len(chromosome)
 
         population['chromosome'] = chromosome
+
+        print("prepare_pop: num nans ", population['chromosome'].isna().sum())
 
         self.chromosome_length = len(population["chromosome"].iloc[0]) #When I set self.population, this can be moved potentially
         
@@ -81,6 +80,7 @@ class JTNN_FNL(GenerativeModel):
         
     def crossover(self, population):
         num_children = len(population)
+        print("crossover: num nans ", population['chromosome'].isna().sum())
 
         parent_1 = []
         parent_2 = []
@@ -105,6 +105,7 @@ class JTNN_FNL(GenerativeModel):
                 parent1_tree_vec_left, parent1_tree_vec_right, parent1_mol_vec_left, parent1_mol_vec_right = np.hsplit(parent1_chrom, 4)
                 parent2_tree_vec_left, parent2_tree_vec_right, parent2_mol_vec_left, parent2_mol_vec_right = np.hsplit(parent2_chrom, 4)
             except:
+                #print("parent1_chrom", parent1_chrom)
                 parent1_tree_vec, parent1_mol_vec = np.hsplit(parent1_chrom, 2)
                 parent2_tree_vec, parent2_mol_vec = np.hsplit(parent2_chrom, 2)
 
@@ -167,10 +168,6 @@ class JTNN_FNL(GenerativeModel):
         Returns: 
         population - Pandas dataframe containing new smiles strings, ids, and 
         """
-        
-        """if self.is_first_epoch:
-            #Encode:
-            population = self.encode_first_generation(population)"""
 
         #Optimize:
         print("Optimizing")
@@ -181,9 +178,8 @@ class JTNN_FNL(GenerativeModel):
 
         #Non-elite population:
         full_population = copy.deepcopy(elite_population)
-        #print("Before: population.shape ", population.shape)
-        #print(population['fitness'].to_list())
-        #print("population.columns", population.columns)
+
+        number_of_iterations = 1
 
         while len(full_population) < self.max_population:
             #num_needed can be increased to create an excess of children to help in the case of duplicated smiles strings
@@ -202,27 +198,35 @@ class JTNN_FNL(GenerativeModel):
 
             full_population = pd.concat([full_population, next_batch])
 
-            #The following code counts how many repeated smiles strings there are. 
-            # The parameter max_clones allows you to define how many repeated smiles strings can exist in the population at any given time
-            smiles_counts = full_population.groupby(full_population['smiles'], as_index=False).size()
-            smiles_counts = smiles_counts[smiles_counts['size'] > self.max_clones]
-            smiles_to_remove = smiles_counts['smiles'].tolist()
-            count = smiles_counts['size'].tolist()
-
-            indexes_to_remove = []
-
-            for smi, count in zip(smiles_to_remove, count):
-                c = count - self.max_clones
-                indexes = full_population[full_population['smiles'] == smi].tail(c).index.values.tolist()
-                indexes_to_remove.extend(indexes)
+            full_population = self.remove_excess_repeated_smiles(full_population)
             
-            full_population.drop(indexes_to_remove, inplace=True)
             
-
         if len(full_population) > self.max_population:
             num_to_remove = abs(len(full_population) - self.max_population)
             full_population.drop(full_population.tail(num_to_remove).index, inplace=True)
-            print(f"Removing {num_to_remove} rows due to excess members of population.")
+        
+        print(f"Performed selection {number_of_iterations} times")
         
         full_population.reset_index(drop=True, inplace=True)
         return full_population
+    
+    def remove_excess_repeated_smiles(self, population):
+        #The following code counts how many repeated smiles strings there are. 
+        # The parameter max_clones allows you to define how many repeated smiles strings can exist in the population at any given time
+        smiles_counts = population.groupby(population['smiles'], as_index=False).size()
+        smiles_counts = smiles_counts[smiles_counts['size'] > self.max_clones]
+        smiles_to_remove = smiles_counts['smiles'].tolist()
+        count = smiles_counts['size'].tolist()
+
+        indexes_to_remove = []
+
+        for smi, count in zip(smiles_to_remove, count):
+            c = count - self.max_clones
+            indexes = population[population['smiles'] == smi].tail(c).index.values.tolist()
+            indexes_to_remove.extend(indexes)
+            
+        if len(indexes_to_remove) > 0:
+            population.drop(indexes_to_remove, inplace=True)
+            population.reset_index(drop=True, inplace=True)
+        
+        return population

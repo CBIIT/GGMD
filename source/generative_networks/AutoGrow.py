@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from copy import deepcopy
 from optimizers.optimizer_factory import create_optimizer
 from generative_networks.base_generative_model import GenerativeModel
 from generative_networks.generative_models_helpers.AutoGrow.mutation.execute_mutations import Mutator
@@ -7,9 +8,12 @@ from generative_networks.generative_models_helpers.AutoGrow.crossover.execute_cr
 
 class AutoGrow(GenerativeModel):
     def __init__(self, params):
+        self.max_population = params.max_population
         self.num_crossovers = params.num_crossovers
         self.num_mutations = params.num_mutations
         self.num_elite = params.num_elite
+
+        self.max_clones = params.max_clones
         
         self.generation_number = 0
         self.optimizer = create_optimizer(params)
@@ -50,26 +54,47 @@ class AutoGrow(GenerativeModel):
 
         self.generation_number += 1
         self.previous_generation = population
-        
-        #generate mutation_pop
-        mutated_df = self.mutate()
-        source = ['mutation' for _ in range(len(mutated_df))]
-        mutated_df['source'] = source
-        mutated_df['generation'] = [[] for _ in range(len(mutated_df))]
-        
-        #generate crossover_pop
-        crossed_df = self.crossover()
-        source = ['crossover' for _ in range(len(crossed_df))]
-        crossed_df['source'] = source
-        crossed_df['generation'] = [[] for _ in range(len(crossed_df))]
-        
+
         #generate elite_pop
         elite_df = self.optimizer.select_elite_pop(population, self.num_elite)
-        print(f"Elite population: size {elite_df.shape}")
-        print("\n")
         
-        #combine mutation_pop, crossover_pop, elite_pop
-        combined_population = pd.concat([mutated_df, crossed_df, elite_df])
-        combined_population.reset_index(drop=True, inplace=True)
+        full_population = deepcopy(elite_df)
         
-        return combined_population
+        while len(full_population) < self.max_population:
+            #generate mutation_pop
+            mutated_df = self.mutate()
+            mutated_df['source'] = np.full(len(mutated_df), "mutation")
+            
+            #generate crossover_pop
+            crossed_df = self.crossover()
+            crossed_df['source'] = np.full(len(crossed_df), "crossover")
+        
+            #combine mutation_pop, crossover_pop, elite_pop
+            full_population = pd.concat([full_population, mutated_df, crossed_df])
+            full_population.reset_index(drop=True, inplace=True)
+
+            #The following code counts how many repeated smiles strings there are. 
+            # The parameter max_clones allows you to define how many repeated smiles strings can exist in the population at any given time
+            smiles_counts = full_population.groupby(full_population['smiles'], as_index=False).size()
+            smiles_counts = smiles_counts[smiles_counts['size'] > self.max_clones]
+            smiles_to_remove = smiles_counts['smiles'].tolist()
+            count = smiles_counts['size'].tolist()
+
+            indexes_to_remove = []
+            for smi, count in zip(smiles_to_remove, count):
+                c = count - self.max_clones
+                indexes = full_population[full_population['smiles'] == smi].tail(c).index.values.tolist()
+                indexes_to_remove.extend(indexes)
+            
+            if len(indexes_to_remove) > 0:
+                full_population.drop(indexes_to_remove, inplace=True)
+                full_population.reset_index(drop=True, inplace=True)
+        
+        if len(full_population) > self.max_population:
+            num_to_remove = abs(len(full_population) - self.max_population)
+            full_population.drop(full_population.tail(num_to_remove).index, inplace=True)
+
+        full_population['chromosome'] = np.full(len(full_population), np.nan)
+        full_population.reset_index(drop=True, inplace=True)
+        
+        return full_population

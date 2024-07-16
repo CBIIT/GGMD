@@ -1,7 +1,7 @@
 import rdkit
 import rdkit.Chem as Chem
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.chemutils import get_clique_mol, tree_decomp, get_mol, get_smiles, set_atommap, enum_assemble, decode_stereo
-from generative_networks.generative_models_helpers.FNL_JTNN.fast_jtnn.vocab import *
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.chemutils import get_clique_mol, tree_decomp, get_mol, get_smiles, set_atommap, enum_assemble, decode_stereo
+from generative_networks.generative_models_helpers.JTVAE.fast_jtnn.vocab import *
 
 class MolTreeNode(object):
 
