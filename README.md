@@ -39,7 +39,7 @@ There are two containers for this software: one built with Singularity and one b
 
 To install the singularity image, run the below command:
 
-`singularity pull library://seantblack/gmd/gmd_0_9.sif`
+`singularity build ggmd.sif docker://seantaylorblack/ggmd:1.1`
 
 Below are steps to run GMD through the singularity container.
 
@@ -48,7 +48,7 @@ Set up a working directory (in the following steps, replace <dir> with that dire
 Copy contents of FNLGMD/workspace/LogP_demo into <dir>
 Edit the output_directory parameter in the config.yaml file that is now in <dir> to be 
     output_directory: '<dir>/'
-$ singularity exec --bind /<dir>:/data /path/to/gmd_img.sif /run_gmd.sh
+$ singularity exec --bind /<dir>:/data /path/to/ggmd.sif /run_gmd.sh
 ```
 
 If you receive the following error, your system administrators may have limited singularities access to write in your working directory `<dir>`. Try setting up your working directory in a different directory location such as your home directory.
@@ -71,7 +71,7 @@ Below are steps to run GMD through the Docker container.
 - Edit the output_directory parameter in the config.yaml file that is now in <dir> to be 
     output_directory: '<dir>'
 
-docker run -v /<dir>:/data gmd_0_9:demo /run_gmd.sh
+docker run -v /<dir>:/data ggmd:1.1 /run_gmd.sh
 ```
 
 
