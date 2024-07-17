@@ -48,6 +48,7 @@ class GeneticOptimizer(Optimizer):
         while len(selected_population) < size:
             if len(population_pool) == 0:
                 population_pool = copy.deepcopy(population)
+                
             #Setup the pool of individuals for the tournament selection to be a random sampling of the population
             #Without replacement means that the same individual will not appear in the sampling more than once
             if self.selection_pool_size > len(population_pool):

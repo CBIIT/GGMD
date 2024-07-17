@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WRK="/FNLGMD/source"
+WRK="/GGMD/source"
 echo $WRK
 cd $WRK
 

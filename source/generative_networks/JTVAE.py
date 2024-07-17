@@ -43,8 +43,6 @@ class JTVAE(GenerativeModel):
 
         population['chromosome'] = chromosome
 
-        print("prepare_pop: num nans ", population['chromosome'].isna().sum())
-
         self.chromosome_length = len(population["chromosome"].iloc[0]) #When I set self.population, this can be moved potentially
         
         return population
@@ -80,8 +78,7 @@ class JTVAE(GenerativeModel):
         
     def crossover(self, population):
         num_children = len(population)
-        print("crossover: num nans ", population['chromosome'].isna().sum())
-
+        
         parent_1 = []
         parent_2 = []
         child_chrom = []
@@ -105,7 +102,6 @@ class JTVAE(GenerativeModel):
                 parent1_tree_vec_left, parent1_tree_vec_right, parent1_mol_vec_left, parent1_mol_vec_right = np.hsplit(parent1_chrom, 4)
                 parent2_tree_vec_left, parent2_tree_vec_right, parent2_mol_vec_left, parent2_mol_vec_right = np.hsplit(parent2_chrom, 4)
             except:
-                #print("parent1_chrom", parent1_chrom)
                 parent1_tree_vec, parent1_mol_vec = np.hsplit(parent1_chrom, 2)
                 parent2_tree_vec, parent2_mol_vec = np.hsplit(parent2_chrom, 2)
 
@@ -179,8 +175,6 @@ class JTVAE(GenerativeModel):
         #Non-elite population:
         full_population = copy.deepcopy(elite_population)
 
-        number_of_iterations = 1
-
         while len(full_population) < self.max_population:
             #num_needed can be increased to create an excess of children to help in the case of duplicated smiles strings
             num_needed = int((self.max_population - len(full_population)) * 1.5) 
@@ -200,12 +194,9 @@ class JTVAE(GenerativeModel):
 
             full_population = self.remove_excess_repeated_smiles(full_population)
             
-            
         if len(full_population) > self.max_population:
             num_to_remove = abs(len(full_population) - self.max_population)
             full_population.drop(full_population.tail(num_to_remove).index, inplace=True)
-        
-        print(f"Performed selection {number_of_iterations} times")
         
         full_population.reset_index(drop=True, inplace=True)
         return full_population
