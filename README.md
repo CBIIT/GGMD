@@ -61,7 +61,7 @@ OSError: Cannot save file into a non-existent directory: '<dir>'
 
 To install the Docker image, run the below command:
 
-`docker pull seantaylorblack/gmd_0_9:demo`
+`docker pull seantaylorblack/ggmd:1.1`
 
 Below are steps to run GMD through the Docker container.
 
