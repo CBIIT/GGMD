@@ -1,7 +1,7 @@
 model_type: 'jtvae'
 
-smiles_input_file: '/path/to/GGMD/examples/LogP_JTVAE/zinc_smiles.txt'
-output_directory: '/path/to/output/directory'
+smiles_input_file: 'examples/LogP_JTVAE/zinc_smiles.txt'
+output_directory: 'output'
 scorer_type: 'LogPTestCase'
 num_epochs: 10
 
@@ -16,10 +16,10 @@ optima_type: "maxima"
 elite_ratio: 0.2 #ELITE POPULATION GUARENTEES THE SURVIVAL OF THE TOP X MOLECULES
 sample_with_replacement: False #False means that during selection, selected parents will not be removed from the pool for parents.
 
-initial_pop_size: 200
-max_population: 200
+initial_pop_size: 20
+max_population: 20
 
 #Generative model parameters:
 ##FNL JTVAE specific
-vocab_path: 'all_vocab.txt'
-model_path: 'model.epoch-35'
+vocab_path: 'examples/LogP_JTVAE/all_vocab.txt'
+model_path: 'examples/LogP_JTVAE/model.epoch-35'

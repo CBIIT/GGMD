@@ -3,8 +3,7 @@ import argparse, yaml
 from yaml import Loader
 from random import sample
 import numpy as np
-
-
+import uuid
 
 class Tracker():
     def __init__(self, params):
@@ -23,6 +22,7 @@ class Tracker():
                                                'chromosome', 
                                                'Number of times this molecule was evolutionarily created (not carried over through elitism)',
                                                'Generation, method this molecule was created, and parent ID numbers'])
+        self.params = params
 
     def init_population(self):
         with open(self._smiles_input_file) as f: 
@@ -102,7 +102,18 @@ class Tracker():
         return population
     
     def publish_data(self):
-        self.master_df.to_csv(self._output_directory + "/data_all_generations.csv", index=False)
+
+        print("Arguments:: ")
+        #print(self.params)
+        params_dict = vars(self.params)
+        for i in params_dict:
+            #print(i, params_dict[i])
+            self.master_df[i] = [params_dict[i]] *  len(self.master_df)
+        
+        unique_id = uuid.uuid4()
+        unique_id = str(unique_id)
+        output_file_name = f'output-data-{unique_id}'
+        self.master_df.to_csv(self._output_directory + f"/{output_file_name}.csv", index=False)
         print(self.master_df)
 
 
