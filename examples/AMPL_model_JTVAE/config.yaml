@@ -14,13 +14,14 @@ mutate_prob: 0.1
 mutation_std: 1
 max_clones: 1
 optima_type: "maxima"
-elite_perc: 0
+elite_ratio: .10
+selection_wtih_replacement: False
 
 initial_pop_size: 50
 max_population: 50
 
 #Generative model parameters:
-##FNL JTVAE specific
+##JTVAE specific
 vocab_path: '/path/to/GGMD/examples/LogP_JTVAE/all_vocab.txt'
 model_path: '/path/to/GGMD/examples/LogP_JTVAE/model.epoch-35'
 
