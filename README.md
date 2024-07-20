@@ -45,7 +45,7 @@ Below are steps to run GMD through the singularity container.
 
 ```
 Set up a working directory (in the following steps, replace <dir> with that directory path) with read/write permission
-Copy contents of FNLGMD/workspace/LogP_demo into <dir>
+Copy contents of GGMD/examples/LogP_JTVAE into <dir>
 Edit the output_directory parameter in the config.yaml file that is now in <dir> to be 
     output_directory: '<dir>/'
 $ singularity exec --bind /<dir>:/data /path/to/ggmd.sif /run_gmd.sh

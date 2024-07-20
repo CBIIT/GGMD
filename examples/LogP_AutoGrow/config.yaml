@@ -3,18 +3,18 @@ model_type: 'autogrow'
 smiles_input_file: '/path/to/GGMD/examples/LogP_AutoGrow/zinc_smiles.txt'
 output_directory: '/path/to/output/directory'
 scorer_type: 'LogPTestCase'
-num_epochs: 10
+num_epochs: 5
 
 #Selection/Optimization params
 optimizer_type: 'geneticoptimizer'
-selection_type: "tournament" #roulette or tournament are accepted
+selection_type: "roulette" #roulette or tournament are accepted
 selection_pool_size: 5 #Previously called the tourn_size
-mate_prob: 0.7
 mutate_prob: 0.2
-mutation_std: 1
-max_clones: 1
+mutation_std: 0.25 #NEEDS FURTHER REVIEW AND MODIFICATION TO YOUR PROBLEM
+max_clones: 1 #DEPENDS ON HOW MANY COPIES OF ONE MOLECULE YOU WANT. MORE ALLOWS FOR CONVERGENCE, LESS ENCOURAGES DIVERSITY
 optima_type: "maxima"
-elite_perc: 0.2
+elite_ratio: 0.15 #ELITE POPULATION GUARENTEES THE SURVIVAL OF THE TOP X MOLECULES
+sample_with_replacement: False #False means that during selection, selected parents will not be removed from the pool for parents.
 
 initial_pop_size: 50
 max_population: 50

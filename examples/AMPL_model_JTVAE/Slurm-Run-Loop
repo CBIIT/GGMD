@@ -16,11 +16,11 @@ hostname -s
 
 conda activate JTVAE-CPU-P3
 
-WRK="/path/to/FNLGMD/source"
+WRK="/path/to/GGMD/source"
 echo $WRK
 cd $WRK
 
-CODE="/path/to/FNLGMD/source/main.py"
-CONF="/path/to/FNLGMD/examples/LogP_JTVAE/config.yaml"
+CODE="/path/to/GGMD/source/main.py"
+CONF="/path/to/GGMD/examples/LogP_JTVAE/config.yaml"
 
 python $CODE -config $CONF
