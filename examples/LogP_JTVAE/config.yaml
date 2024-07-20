@@ -1,7 +1,7 @@
 model_type: 'jtvae'
 
-smiles_input_file: '/path/to/GGMD/examples/LogP_JTVAE/zinc_smiles.txt'
-output_directory: '/path/to/output/directory'
+smiles_input_file: '/home/0000/003/GGMD/examples/LogP_JTVAE/zinc_smiles.txt'
+output_directory: '/home/0000/003/working'
 scorer_type: 'LogPTestCase'
 num_epochs: 10
 
@@ -21,5 +21,5 @@ max_population: 200
 
 #Generative model parameters:
 ##FNL JTVAE specific
-vocab_path: 'all_vocab.txt'
-model_path: 'model.epoch-35'
+vocab_path: '/home/0000/003/GGMD/examples/LogP_JTVAE/all_vocab.txt'
+model_path: '/home/0000/003/GGMD/examples/LogP_JTVAE//model.epoch-35'

@@ -113,6 +113,10 @@ class decoder():
             self.n_verb = 100
         else:
             self.n_verb = 0
+        
+        model = JTNNVAE(self.vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
+        model.load_state_dict(torch.load(self.model_path, map_location='cpu'))
+        self.model = model.cpu()
     
     def wrap_decode_2(self, latent_vectors):
         
@@ -136,9 +140,9 @@ class decoder():
         #vocab = [x.strip("\r\n ") for x in open(self.vocab)] #TODO: When combining these two classes, can combine vocab
         #vocab = Vocab(vocab)
 
-        model = JTNNVAE(self.vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
+        """model = JTNNVAE(self.vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
         model.load_state_dict(torch.load(self.model_path, map_location='cpu'))
-        self.model = model.cpu()
+        self.model = model.cpu()"""
 
         #smi_recon = Parallel(n_jobs=self.n_cpus,batch_size=1,max_nbytes=None,mmap_mode=None,verbose=self.n_verb)\
         #    (delayed(self.wrap_decode_2)(latent[i]) for i in range(len(latent)))
@@ -163,11 +167,7 @@ class decoder():
         #vocab = [x.strip("\r\n ") for x in open(self.vocab)] #TODO: When combining these two classes, can combine vocab
         #vocab = Vocab(vocab)
 
-        model = JTNNVAE(self.vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
-        model.load_state_dict(torch.load(self.model_path, map_location='cpu'))
-        self.model = model.cpu()
-
-        smi_recon = Parallel(n_jobs=self.n_cpus,batch_size=5,max_nbytes=50000,mmap_mode=None,verbose=self.n_verb)\
+        smi_recon = Parallel(n_jobs=self.n_cpus, batch_size=5, max_nbytes=50000, mmap_mode=None, verbose=self.n_verb)\
             (delayed(self.wrap_decode_simple)(latent_list[i]) for i in range(len(latent_list)))
         
         return smi_recon
@@ -177,9 +177,9 @@ class decoder():
         #vocab = [x.strip("\r\n ") for x in open(self.vocab)] #TODO: When combining these two classes, can combine vocab
         #vocab = Vocab(vocab)
 
-        model = JTNNVAE(self.vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
+        """model = JTNNVAE(self.vocab, self.hidden_size, self.latent_size, self.depthT, self.depthG)
         model.load_state_dict(torch.load(self.model_path, map_location='cpu'))
-        model = model.cpu()
+        model = model.cpu()"""
 
         i = 0
 
@@ -191,7 +191,7 @@ class decoder():
             tree_vec,mol_vec = np.hsplit(all_vec, 2)
             tree_vec = create_var(torch.from_numpy(tree_vec).float())
             mol_vec = create_var(torch.from_numpy(mol_vec).float())
-            s = model.decode_2(tree_vec, mol_vec, prob_decode=False)
+            s = self.model.decode_2(tree_vec, mol_vec, prob_decode=False) #CHECK HERE
             if s is not None:
                 
                 valid_smiles.append(s)

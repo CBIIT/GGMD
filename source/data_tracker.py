@@ -3,6 +3,7 @@ import argparse, yaml
 from yaml import Loader
 from random import sample
 import numpy as np
+from time import time
 
 
 
@@ -23,6 +24,9 @@ class Tracker():
                                                'chromosome', 
                                                'Number of times this molecule was evolutionarily created (not carried over through elitism)',
                                                'Generation, method this molecule was created, and parent ID numbers'])
+
+        #print("params: ", params)
+        self.params = params
 
     def init_population(self):
         with open(self._smiles_input_file) as f: 
@@ -102,7 +106,12 @@ class Tracker():
         return population
     
     def publish_data(self):
-        self.master_df.to_csv(self._output_directory + "/data_all_generations.csv", index=False)
+
+        params_dict = vars(self.params)
+        for x in params_dict:
+            self.master_df[x] = np.full(len(self.master_df), params_dict[x])
+
+        self.master_df.to_csv(self._output_directory + f"/data_all_generations{time()}.csv", index=False)
         print(self.master_df)
 
 
