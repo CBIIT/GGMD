@@ -26,7 +26,7 @@ model_path: '/path/to/GGMD/examples/LogP_JTVAE/model.epoch-35'
 
 #AMPL scorer (singularity)
 container_type: 'singularity'
-ampl_image: '/data/ampl.sif' #Set this value to point to the location of your singularity container.
+ampl_image: '/path/to/ampl.sif' #Set this value to point to the location of your singularity container.
 target_col_name: 'pIC50' #Change this to match your target
 working_directory: '/path/to/workspace/directory' #This directory is what will be mounted to the container to pass files in and out
 
