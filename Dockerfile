@@ -20,7 +20,7 @@ ENV PATH /opt/conda/envs/env/bin:$PATH
 RUN apt-get update && apt-get install -y sendmail
 
 # Clone the repository
-RUN git clone https://github.com/CBIIT/GGMD
+RUN git clone https://github.com/CBIIT/GGMD.git
 
 # Install Flask (or any other dependencies you might need)
 RUN pip install flask PyYAML
